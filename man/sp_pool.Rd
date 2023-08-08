@@ -20,5 +20,5 @@ A list with a vector of species, and a vector of its distribution.
 This function sets the species pool for a given region
 }
 \examples{
-sp_pool(pool = 100, rarest = 0.05, commonest = 0.7)
+sp_pool(pool = 50, rarest = 0.05, commonest = 0.7)
 }

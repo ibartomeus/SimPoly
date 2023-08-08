@@ -6,7 +6,7 @@
 \alias{SimPoly-package}
 \title{SimPoly: Like SimCity but for pollinator communities}
 \description{
-Pollinator community simulator to implment power anlysis in EU-PoMS
+Pollinator community simulator to implment power anlysis in EU-PoMS.
 }
 \seealso{
 Useful links:

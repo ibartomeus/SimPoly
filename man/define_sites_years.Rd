@@ -13,7 +13,7 @@ define_sites_years(pool, n_years, n_sites, rich_mean = 30, rich_sd = 5)
 
 \item{n_sites}{Numeric, number of sites (imagine a lattice)}
 
-\item{rich_mean}{Numeric, mean species richness expected per site}
+\item{rich_mean}{Numeric, mean species richness expected per site.}
 
 \item{rich_sd}{Numeric, standard deviation of the species richness expected per site}
 }

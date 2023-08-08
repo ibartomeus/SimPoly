@@ -18,5 +18,12 @@ A data.frame.
 This aggregates all rounds per year species and site
 }
 \examples{
+pool <- sp_pool(50)
+site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+pars <- sp_responses(site_years = site_years)
+true_abundance <- true_abundance(rounds = 8,
+                         site_years = site_years,
+                         sp_responses = pars)
+eupoms <- obs_abundance(true_abundance = true_abundance, sp_responses = pars)
 summary_poms(eupoms)
 }
