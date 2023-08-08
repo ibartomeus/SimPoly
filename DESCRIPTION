@@ -1,25 +1,21 @@
 Package: SimPoly
 Title: Like SimCity but for pollinator communities
-Version: 0.1
+Version: 0.2
 Authors@R: 
-  c(
-    person("Ignasi", "Bartomeus", , "nacho.bartomeus@gmail.com", role = c("aut", "cre"),
+  c(person("Ignasi", "Bartomeus", , "nacho.bartomeus@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7893-4389 ")))
-Description: Pollinator community simulator to implment power anlysis in EU-PoMS
-License: MIT
+Description: Pollinator community simulator to implment power anlysis in EU-PoMS.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 URL: https://github.com/ibartomeus/SimPoly
 BugReports: https://github.com/ibartomeus/SimPoly/issues
 Depends:
-    reshape,
-    reshape2,
-    coenocliner,
     R (>= 2.10)
 LazyData: true
-Suggests: 
-    covr,
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
 Imports: 
+    stats,
+    reshape,
+    reshape2,
+    coenocliner

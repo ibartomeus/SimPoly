@@ -1,3 +1,4 @@
-# SimPoly 0.1
+# SimPoly
 
-* Added a `NEWS.md` file to track changes to the package.
+* 0.2 Simulations up and running, but not final. Package operative for tetsing. 
+* 0.1 Work in progress.
