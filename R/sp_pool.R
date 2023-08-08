@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#' sp_pool(pool = 100, rarest = 0.05, commonest = 0.7)
+#' sp_pool(pool = 50, rarest = 0.05, commonest = 0.7)
 sp_pool <- function(pool = 100, rarest = 0.05, commonest = 0.7){
   #defensive programming here (i.e. check if numeric and range)
   #set number of species

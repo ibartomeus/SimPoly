@@ -17,7 +17,6 @@
 #' pool <- sp_pool(50)
 #' site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
 #' sp_responses(site_years = site_years)
-
 sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
                          pheno_range_mean = 25, pheno_range_sd = 5,
                          trend_max = 5, trend_min = -5){

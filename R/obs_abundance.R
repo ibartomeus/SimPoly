@@ -9,9 +9,15 @@
 #' @export
 #'
 #' @examples
-#' obs_abundance(true_abundance, sp_responses)
-obs_abundance <- function(true_abundance, sp_responses){
-  require(reshape)
+#' pool <- sp_pool(50)
+#' site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+#' pars <- sp_responses(site_years = site_years)
+#' true_abundance <- true_abundance(rounds = 8,
+#'                                  site_years = site_years,
+#'                                  sp_responses = pars)
+#' obs_abundance(true_abundance = true_abundance, sp_responses = pars)
+obs_abundance <- function(true_abundance = NULL, sp_responses){
+  #require(reshape)
   #set fraction of true abundance observed.
   fraction_observed <- 0.5 # we detect i.e. half the existing individuals that day
   #noise can be probably added¿?
@@ -27,7 +33,7 @@ obs_abundance <- function(true_abundance, sp_responses){
   indiv_det <- merge(indiv, pars[,c("species", "detect")], all.x = TRUE)
   #keep track of site names
   site_names <- unique(sim_data$siteID)
-  n_years <- max(site_years$year) #can this be missleading in any situation?
+  n_years <- max(sim_data$year) #can this be missleading in any situation?
   #loop trough years
   for(k in 1:n_years){
     year_temp <- subset(indiv_det, year == k)
