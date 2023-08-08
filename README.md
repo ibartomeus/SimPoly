@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8223668.svg)](https://doi.org/10.5281/zenodo.8223668)
+
 # SimPoly
 
 The goal of SimPoly is to simulate a EU-PoMS like datasets with known
