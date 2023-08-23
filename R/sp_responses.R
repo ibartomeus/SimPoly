@@ -32,7 +32,7 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   opt <- rnorm(n_sp, mean = pheno_peak_mean, sd = pheno_peak_sd) # It's a fair assumption? Or is bimodal spring-summer?
   tol <- rnorm(n_sp, mean = pheno_range_mean, sd = pheno_range_sd) # species tolerances (phenology ranges)
 
-  #Define species abunacnes following a lognormal distribution
+  #Define species abundances following a lognormal distribution
   h <- ceiling(rlnorm(n_sp, meanlog = 3)) # max abundances per species ->
   #max(h) #this gives up to ~400 individuals per site of the dominant speices
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
@@ -41,7 +41,7 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #We assume linearity with time where response = h + slope*year
   slope <- runif(n_sp, min = trend_min, max = trend_max)
   #Revisit this with a better slope rationale (now random)
-  #Values ~ -0.25 reprsent a 1% decline per year.
+  #Values ~ -0.25 represent a 1% decline per year.
 
   #Finally, we define species detectabilities
   #Assign to each species a detectability
