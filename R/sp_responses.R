@@ -46,9 +46,11 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #Finally, we define species detectabilities
   #Assign to each species a detectability
   detect <- runif(n_sp) #random for now, they can depend on abundance (a function of h)?
+  detect_pan <- runif(n_sp, min = 0, max = 0.25) #Now uncorrelated! I set max to 0.25, as this is prob of falling in a pantrap per indiv.
+  #Think about this.
 
   #We can join this info at species level
   pars <- data.frame(species = species,  opt = opt, tol = tol, h = h, slope = slope,
-                     detect = detect) # put in a matrix
+                     detect = detect, detect_pan = detect_pan) # put in a matrix
   pars
 }
