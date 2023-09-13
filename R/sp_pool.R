@@ -19,6 +19,7 @@ sp_pool <- function(pool = 100, rarest = 0.05, commonest = 0.7){
   species <- paste0("Sp_", 1:pool)
   #assign to each species a distribution from widespread to rare.
   distrib <- runif(pool, rarest, commonest) #Default values assuming a max widespread of 70%
-  #hist(distrib) #This can be informed by data. rpois? log normal?
+  #beta_distrib <- rbeta(pool, 1, 3)
+  #hist(beta_distrib) #values of 1 - 3 give decent spread between 0.05 and 0.7
   list(species, distrib)
   }
