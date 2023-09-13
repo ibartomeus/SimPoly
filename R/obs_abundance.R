@@ -16,6 +16,7 @@
 #'                                  site_years = site_years,
 #'                                  sp_responses = pars)
 #' obs_abundance(true_abundance = true_abundance, sp_responses = pars)
+#'
 obs_abundance <- function(true_abundance = NULL, sp_responses){
   #require(reshape)
   #set fraction of true abundance observed.
@@ -33,7 +34,7 @@ obs_abundance <- function(true_abundance = NULL, sp_responses){
   indiv_det <- merge(indiv, pars[,c("species", "detect")], all.x = TRUE)
   #keep track of site names
   site_names <- unique(sim_data$siteID)
-  n_years <- max(sim_data$year) #can this be missleading in any situation?
+  n_years <- max(sim_data$year) #can this be misleading in any situation?
   #loop trough years
   for(k in 1:n_years){
     year_temp <- subset(indiv_det, year == k)
