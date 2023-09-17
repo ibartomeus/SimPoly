@@ -37,13 +37,9 @@ true_abundance <- function(rounds = 8, startmonth = 2, endmonth = 10,
     #select year j
     year_temp <- subset(data, year == j)
     #We add white noise to h as a function of year (yearly fluctuations)
-    #pars$h_y <- pars$h + rnorm(length(pars$h), 0, 20) #Not happy with this white noise.
-    #Alternativelly, it can be directional (red noise)
-    pars$h_y <- pars$h + pars$slope*j + rnorm(length(pars$h), 0, 1) #Not happy with this white noise.
-    #This can be improved to talk in % decline... now rare species are penalized respect abundant species.
-    #Right now, it requires ensuring no negative numbers
-    pars$h_y <- ceiling(pars$h_y)
-    pars$h_y <- ifelse(pars$h_y < 0, 0, pars$h_y) #here we can lose species, which is nice.
+    #And directional noise (red noise)
+    white_noise <- rnorm(length(pars$h), 0, 0.05) #this is very little white noise.
+    pars$h_y <- pars$h * ((1-pars$slope + white_noise)^j) #can never get negative, just terribly small.
     for(i in 1:length(site_names)){
       #select site i
       site_temp <- subset(data, siteID == site_names[i])

@@ -7,8 +7,8 @@
 #' @param pheno_peak_sd Numeric, sd of the species phenology peak
 #' @param pheno_range_mean Numeric, mean of the species phenology ranges
 #' @param pheno_range_sd Numeric, sd of the species phenology ranges
-#' @param trend_max Numeric, maximum species change with time. The slope of a linear trend. Values ~ -0.25 reprsent a 1% decline per year.
-#' @param trend_min Numeric, minimum species change with time. The slope of a linear trend. Values ~ -0.25 reprsent a 1% decline per year.
+#' @param trend_max Numeric, minimum percentage of decline per year. The slope of a linear trend. Take values between -1 and 1.
+#' @param trend_min Numeric, máximum percentage of decline per year. The slope of a linear trend. Take values between -1 and 1.
 #'
 #' @return A data.frame.
 #' @export
@@ -19,7 +19,7 @@
 #' sp_responses(site_years = site_years)
 sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
                          pheno_range_mean = 25, pheno_range_sd = 5,
-                         trend_max = 5, trend_min = -5){
+                         trend_max = 0.3, trend_min = -0.3){
   #Define species responses.
   species <- unique(site_years$species)
   n_sp <- length(species)
