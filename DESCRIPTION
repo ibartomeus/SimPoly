@@ -3,7 +3,9 @@ Title: Like SimCity but for pollinator communities
 Version: 0.2
 Authors@R: 
   c(person("Ignasi", "Bartomeus", , "nacho.bartomeus@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-7893-4389 ")))
+           comment = c(ORCID = "0000-0001-7893-4389 ")),
+           person("Nick", "Isaac", , , role = c("ctb")),
+           person("Oliver", "Schweiger", , , role = c("ctb")))
 Description: Pollinator community simulator to implment power anlysis in EU-PoMS.
 License: MIT + file LICENSE
 Encoding: UTF-8
