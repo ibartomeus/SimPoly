@@ -4,14 +4,12 @@
 \alias{sp_pool}
 \title{Set species pool}
 \usage{
-sp_pool(pool = 100, rarest = 0.05, commonest = 0.7)
+sp_pool(pool = 100, mean_occ = 0.25)
 }
 \arguments{
 \item{pool}{Numeric, number of species}
 
-\item{rarest}{Numeric, true occupancy of the rarest species from 0-1}
-
-\item{commonest}{Numeric, true occupancy of the commonest species from 0-1}
+\item{mean_occ}{Numeric, mean expected occupancy (0-1). Default 0.25, which creates occupancy values ranging from 0 to ~0.75}
 }
 \value{
 A list with a vector of species, and a vector of its distribution.
@@ -20,5 +18,5 @@ A list with a vector of species, and a vector of its distribution.
 This function sets the species pool for a given region
 }
 \examples{
-sp_pool(pool = 50, rarest = 0.05, commonest = 0.7)
+sp_pool(pool = 50, mean_occ = 0.25)
 }

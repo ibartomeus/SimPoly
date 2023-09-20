@@ -10,8 +10,8 @@ sp_responses(
   pheno_peak_sd = 50,
   pheno_range_mean = 25,
   pheno_range_sd = 5,
-  trend_max = 5,
-  trend_min = -5
+  trend_max = 1.1,
+  trend_min = 0.9
 )
 }
 \arguments{
@@ -25,9 +25,9 @@ sp_responses(
 
 \item{pheno_range_sd}{Numeric, sd of the species phenology ranges}
 
-\item{trend_max}{Numeric, maximum species change with time. The slope of a linear trend. Values ~ -0.25 reprsent a 1\% decline per year.}
+\item{trend_max}{Numeric, minimum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.}
 
-\item{trend_min}{Numeric, minimum species change with time. The slope of a linear trend. Values ~ -0.25 reprsent a 1\% decline per year.}
+\item{trend_min}{Numeric, máximum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.}
 }
 \value{
 A data.frame.
