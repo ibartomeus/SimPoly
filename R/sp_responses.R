@@ -7,8 +7,8 @@
 #' @param pheno_peak_sd Numeric, sd of the species phenology peak
 #' @param pheno_range_mean Numeric, mean of the species phenology ranges
 #' @param pheno_range_sd Numeric, sd of the species phenology ranges
-#' @param trend_max Numeric, minimum percentage of decline per year. The slope of a linear trend. Take values between -1 and 1.
-#' @param trend_min Numeric, máximum percentage of decline per year. The slope of a linear trend. Take values between -1 and 1.
+#' @param trend_max Numeric, minimum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.
+#' @param trend_min Numeric, máximum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.
 #'
 #' @return A data.frame.
 #' @export
@@ -19,7 +19,7 @@
 #' sp_responses(site_years = site_years)
 sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
                          pheno_range_mean = 25, pheno_range_sd = 5,
-                         trend_max = 0.3, trend_min = -0.3){
+                         trend_max = 1.1, trend_min = 0.9){
   #Define species responses.
   species <- unique(site_years$species)
   n_sp <- length(species)
@@ -29,7 +29,7 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   locs <- seq(ming, maxg, length = 365) # gradient locations (i.e. daily resolution)
 
   #Define phenological peaks and variances
-  opt <- rnorm(n_sp, mean = pheno_peak_mean, sd = pheno_peak_sd) # It's a fair assumption? Or is bimodal spring-summer?
+  opt <- rnorm(n_sp, mean = pheno_peak_mean, sd = pheno_peak_sd) # Normally distributed it's a fair assumption. However, a bimodal spring-summer distribution can be implemented if necessary
   tol <- rnorm(n_sp, mean = pheno_range_mean, sd = pheno_range_sd) # species tolerances (phenology ranges)
 
   #Define species abundances following a lognormal distribution
@@ -37,17 +37,17 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #max(h) #this gives up to ~400 individuals per site of the dominant speices
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
 
+  #JRC asks about the possibility of an abundance-dependent assignation of phenological tolerances.
+
   #We can define also here the responses expected (i.e. trend).
-  #We assume linearity with time where response = h + slope*year
+  #We assume a multiplicative slope (-1 and 1) affecting the population per year.
   slope <- runif(n_sp, min = trend_min, max = trend_max)
-  #Revisit this with a better slope rationale (now random)
-  #Values ~ -0.25 represent a 1% decline per year.
+  #We assume an uniform spread of responses across species within the specifies range.
 
   #Finally, we define species detectabilities
   #Assign to each species a detectability
-  detect <- runif(n_sp) #random for now, they can depend on abundance (a function of h)?
-  detect_pan <- runif(n_sp, min = 0, max = 0.25) #Now uncorrelated! I set max to 0.25, as this is prob of falling in a pantrap per indiv.
-  #Think about this.
+  detect <- runif(n_sp) #random. Note that when implemented, they will be weighted by species abundance.
+  detect_pan <- runif(n_sp, min = 0, max = 0.25) #Now uncorrelated with above! I set max to 0.25, as this is prob of falling in a pantrap per indiv.
 
   #We can join this info at species level
   pars <- data.frame(species = species,  opt = opt, tol = tol, h = h, slope = slope,

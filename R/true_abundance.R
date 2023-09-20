@@ -27,19 +27,19 @@ true_abundance <- function(rounds = 8, startmonth = 2, endmonth = 10,
   pars <- sp_responses
   #Rounds are constrained from February to October.
   rounds <- seq(startmonth*30, endmonth*30, length = rounds) # gradient locations (sampling points)
-  #Calculate abunacnde per site and year
-  n_years <- max(data$year) #can this be missleading in any situation?
+  #Calculate abundande per site and year
+  n_years <- max(data$year)
   site_names <- unique(data$siteID)
   #mus <- list() #store in lists if needed (do we need to keep track of this?)
-  #We store final counts only
+  #For now we store final counts only
   simnbs <- data.frame(year = NA, siteID = NA, round = NA, species = NA, abundance = NA)
   for(j in 1:n_years){
     #select year j
     year_temp <- subset(data, year == j)
     #We add white noise to h as a function of year (yearly fluctuations)
-    #And directional noise (red noise)
-    white_noise <- rnorm(length(pars$h), 0, 0.05) #this is very little white noise.
-    pars$h_y <- pars$h * ((1-pars$slope + white_noise)^j) #can never get negative, just terribly small.
+    #And a directional noise (red noise) based on species responses.
+    white_noise <- rnorm(length(pars$h), 0, 0.05) #this is very little white noise. Revisit once data is available
+    pars$h_y <- pars$h * ((pars$slope + white_noise)^j) #can never get negative, just terribly small.
     for(i in 1:length(site_names)){
       #select site i
       site_temp <- subset(data, siteID == site_names[i])

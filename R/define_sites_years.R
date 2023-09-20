@@ -21,7 +21,7 @@ define_sites_years <- function(pool, n_years, n_sites,
   distib <- pool[[2]]
   #calculate expected richness per site
   richness <- ceiling(rnorm(n_sites, mean = rich_mean, sd = rich_sd))
-  #hist(richness) #Again, this can be inferred from data.
+  #hist(richness) #rpois possible, but a quick visual inspection of data suggest rnorm is good enough.
   #Avoid negative numbers.
   richness <- ifelse(richness < 1, yes = 1, no = richness) #not too elegant.
   #create a vector of species per site over years. We will try to use data.frames to store the outputs
@@ -37,6 +37,7 @@ define_sites_years <- function(pool, n_years, n_sites,
 
   #And then simply stack as many years as needed
   #We assume no immigration / emigration at this point. i.e. closed populations
+  #But species can get extinct over time (see next functions).
   data$year <- 1 #fill first year
   base <- data
   for(i in 1:(n_years-1)){
