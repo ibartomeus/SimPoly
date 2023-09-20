@@ -6,7 +6,7 @@
 # SimPoly
 
 The goal of SimPoly is to simulate a EU-PoMS like datasets with known
-parameters and apropiate built in stochasticity.
+parameters and appropriate built in stochasticity.
 
 ## Installation
 
@@ -17,40 +17,110 @@ devtools::install_github("ibartomeus/SimPoly")
 
 ## Example
 
-This is a basic example to show how we build one dataset:
-
 ``` r
 library(SimPoly)
-#First we define the number of species, sites and years to simulate.
+set.seed(32468)
+```
+
+This is a basic example to show how we build one dataset:
+
+First we define the number of species, sites and years to simulate. We
+do this using the `define_sites_years()` functions. The `pool` argument
+is a call to `sp_pool()`, which simply defines the number of species
+(here `pool = 100`), and the occupancy of the `rarest` and `commonest`
+species.
+
+``` r
 site_years <- define_sites_years(pool = sp_pool(pool = 100, 
-                                                rarest = 0.05, commonest = 0.7),
+                                                mean_occ = 0.25),
                                  n_years = 3, n_sites = 10)
+```
+
+Let’s take a closer look at the data.
+
+``` r
+str(site_years)
 head(site_years)
-#Second, we specify species attributes such as phenology, abundance and detectability
+length(unique(site_years$siteID))
+length(unique(site_years$species))
+```
+
+Note that the number of species in the dataset is only `89`, compared
+with `100` in the species pool. This reflects stochasticity in how the
+species are assigned to sites.
+
+Second, we specify species attributes such as phenology, abundance and
+detectability
+
+``` r
 pars <- sp_responses(site_years = site_years,
                      pheno_peak_mean = 120, pheno_peak_sd = 50,
                      pheno_range_mean = 25, pheno_range_sd = 5,
-                     trend_max = 0, trend_min = -2)
+                     trend_max = 0, trend_min = -0.3)
+str(pars)
 head(pars)
-#Third, we sample the true abundance values expected at each sampling point.
+```
+
+There is one row per species, with the following columns:  
+`opt` = day since 1 january of maximum abundance.  
+`tol` = spread \#range or sdev? \#IB: I think neither, I need to look
+specifics in coenocline function.  
+`h` = expected species abundance along a dominant-rare log normal
+distribution.  
+`slope` = trend in abundance per year on the abundance scale.  
+`detect` = detectability in probability of a species being detected in a
+transect (independent of its abundance).  
+`detect_pan` = detectability in probability of a specimen falling in a
+pantrap.
+
+Third, we sample the true abundance values expected at each sampling
+point.
+
+``` r
 dat <- true_abundance(rounds = 8,
                       site_years = site_years,
                       sp_responses = pars)
+str(dat)
 head(dat)
-#Finally, we sample with detection error from the true values.
+```
+
+There are 7414 observations: one per species per site.  
+`year`: an integer from 1-3 (as defined by n_years, above). `siteID`:
+which site is it. `round`: month of the year of this survey. `species`:
+which species.  
+`abundance`: abundance during that visit \# presumably this changes
+through the season, but I can’t see how. \#IB: Yes, it does.
+
+From this table we can calculate species richness per site
+
+``` r
+library(reshape2)
+(rich <- dcast(dat, siteID ~ "richness", value.var = 'species', function(x) length(unique(x))))
+```
+
+Finally, we sample with detection error from the true values.
+
+``` r
 dat_obs <- obs_abundance(true_abundance = dat, sp_responses = pars)
 head(dat_obs)
-#We can simulate a second transect
+plot(dat_obs$obs, dat_obs$presences_pan) #nice expected correlation, but more noisy.
+```
+
+We can simulate a second transect if desired:
+
+``` r
 dat_obs$obs2 <- obs_abundance(true_abundance = dat, sp_responses = pars)$obs #note order is preserved
 head(dat_obs)
 plot(dat_obs$obs, dat_obs$obs2) #nice expected correlation.
-#Or pan traps. Let's assume a different detectability
-pars_pantrap <- pars
-pars_pantrap$detect <- runif(n = length(pars_pantrap$detect)) #this assume independent detectabilities
-dat_obs$obs_pantrap <- obs_abundance(true_abundance = dat, sp_responses = pars_pantrap)$obs #note order is preserved
-plot(dat_obs$obs, dat_obs$obs_pantrap) #nice expected correlation, but more noisy.
-#this is the final output
+```
+
+This is the final output:
+
+``` r
 head(dat_obs)
+```
+
+``` r
 plot(dat_obs$abundance, dat_obs$obs, las = 1, xlim = c(0,max(dat_obs$abundance)), 
      ylim = c(0,max(dat_obs$abundance))) 
 #you can summarize observed variables per species, site and year

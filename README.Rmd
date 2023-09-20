@@ -24,7 +24,7 @@ The goal of SimPoly is to simulate a EU-PoMS like datasets with known parameters
 
 ## Installation
 
-``` {r}
+``` {r, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 # install.packages("devtools")
 devtools::install_github("ibartomeus/SimPoly")
 ```
@@ -43,7 +43,7 @@ First we define the number of species, sites and years to simulate. We do this u
 
 ```{r example1, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 site_years <- define_sites_years(pool = sp_pool(pool = 100, 
-                                                rarest = 0.05, commonest = 0.7),
+                                                mean_occ = 0.25),
                                  n_years = 3, n_sites = 10)
 ```
 
@@ -63,7 +63,7 @@ Second, we specify species attributes such as phenology, abundance and detectabi
 pars <- sp_responses(site_years = site_years,
                      pheno_peak_mean = 120, pheno_peak_sd = 50,
                      pheno_range_mean = 25, pheno_range_sd = 5,
-                     trend_max = 0, trend_min = -2)
+                     trend_max = 0, trend_min = -0.3)
 str(pars)
 head(pars)
 ```
@@ -73,7 +73,7 @@ There is one row per species, with the following columns:
 `tol` = spread #range or sdev? #IB: I think neither, I need to look specifics in coenocline function.  
 `h` = expected species abundance along a dominant-rare log normal distribution.  
 `slope` = trend in abundance per year on the abundance scale.    
-`detect` = detectability in probability of a specimen being detected in a transect.   
+`detect` = detectability in probability of a species being detected in a transect (independent of its abundance).   
 `detect_pan` = detectability in probability of a specimen falling in a pantrap.      
 
 Third, we sample the true abundance values expected at each sampling point.
