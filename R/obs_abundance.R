@@ -98,7 +98,7 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
     }
     print(paste("year", k ,"calculated at", Sys.time()))
   }
-  out <- out[,-7] #deleting empty first row and detect_pan to avoid confusions.
+  out <- out[,-8] #deleting empty first row and detect_pan to avoid confusions.
   out
 }
 
