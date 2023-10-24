@@ -77,7 +77,7 @@ Third, we sample the true abundance values expected at each sampling
 point.
 
 ``` r
-dat <- true_abundance(rounds = 8,
+dat <- true_abundance(n_round = 8,
                       site_years = site_years,
                       sp_responses = pars)
 str(dat)

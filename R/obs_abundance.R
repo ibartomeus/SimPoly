@@ -15,7 +15,7 @@
 #' pool <- sp_pool(50)
 #' site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
 #' pars <- sp_responses(site_years = site_years)
-#' abun <- true_abundance(rounds = 8,
+#' abun <- true_abundance(n_round = 8,
 #'                                  site_years = site_years,
 #'                                  sp_responses = pars)
 #' obs_abundance(true_abundance = abun, sp_responses = pars)
@@ -28,11 +28,12 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
 
   sim_data <- true_abundance
   pars <- sp_responses
+  round_tesaurus <- data.frame(round = 1:length(rounds), jday = rounds)
   #placeholder to save generated data
-  out <- data.frame(year = NA, siteID = NA, round = NA, species = NA, abundance = NA,
+  out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
                     obs = NA, detect_pan = NA, total_pantraps = NA, presences_pan = NA)
   #expand per individual catch so each indivdual is a row
-  indiv <-  reshape::untable(sim_data[,c("year", "siteID", "round", "species")],
+  indiv <-  reshape::untable(sim_data[,c("year", "siteID", "round", "jday", "species")],
                              num = sim_data[,c("abundance")])
   #add detectabilities (stored in pars)
   indiv_det <- merge(indiv, pars[,c("species", "detect", "detect_pan")], all.x = TRUE)
@@ -70,6 +71,7 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
           obs_sp <- data.frame(year = rep(k, length(summary_obs_raw)),
                                siteID = rep(site_names[j], length(summary_obs_raw)),
                                round = rep(i, length(summary_obs_raw)),
+                               jday = round_tesaurus$jday[which(round_tesaurus$round == i)],
                                species = names(summary_obs_raw),
                                abundance = as.vector(summary_obs_raw),
                                obs = as.vector(obs),
