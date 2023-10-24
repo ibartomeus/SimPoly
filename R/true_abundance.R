@@ -39,6 +39,9 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
     #We add white noise to h as a function of year (yearly fluctuations)
     #And a directional noise (red noise) based on species responses.
     white_noise <- rnorm(length(pars$h), 0, 0.05) #this is very little white noise. Revisit once data is available
+    #we can make wn proportional to h... how?
+    #white_noise <- rnorm(length(pars$h), 0, 0.05)
+    #pars$slope + white_noise THIS SHOULD RANGE 0-1, force here. TODO
     pars$h_y <- pars$h * ((pars$slope + white_noise)^j) #can never get negative, just terribly small.
     for(i in 1:length(site_names)){
       #select site i
