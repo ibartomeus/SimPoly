@@ -25,7 +25,6 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
   #set fraction of true abundance observed.
   fraction_observed <- fraction_observed # we detect i.e. half the existing individuals that day
   #noise can be probably added? Not for now.
-
   sim_data <- true_abundance
   pars <- sp_responses
   round_tesaurus <- data.frame(round = 1:length(rounds), jday = rounds)
