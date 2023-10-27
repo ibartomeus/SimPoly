@@ -33,7 +33,7 @@ This function simulate sampling with a detection probablity per species.
 pool <- sp_pool(50)
 site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
 pars <- sp_responses(site_years = site_years)
-abun <- true_abundance(rounds = 8,
+abun <- true_abundance(n_round = 8,
                                  site_years = site_years,
                                  sp_responses = pars)
 obs_abundance(true_abundance = abun, sp_responses = pars)
