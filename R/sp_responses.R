@@ -33,8 +33,8 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   tol <- rnorm(n_sp, mean = pheno_range_mean, sd = pheno_range_sd) # species tolerances (phenology ranges)
 
   #Define species abundances following a lognormal distribution
-  h <- ceiling(rlnorm(n_sp, meanlog = 2)) # max abundances per species ->
-  #max(h) #this gives up to ~100 individuals per site of the dominant speices
+  h <- ceiling(rlnorm(n_sp, meanlog = 3)) # max abundances per species ->
+  #max(h) #this gives up to ~400 individuals per site of the dominant speices
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
 
   #JRC asks about the possibility of an abundance-dependent assignation of phenological tolerances.
