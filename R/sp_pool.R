@@ -21,6 +21,6 @@ sp_pool <- function(pool = 100, mean_occ = 0.25){
   #calculate beta knowing mean_occ = alpha / alpha+beta
   beta <- (alpha -alpha*mean_occ)/mean_occ
   distrib <- rbeta(pool, alpha, beta) #1,3
-  #hist(rbeta(pool, 1, 2.3)) #values of 1 - 3 give decent spread between 0.05 and 0.7
+  #hist(rbeta(1000, 1, 2.3)) #values of 1 - 3 give decent spread between 0.05 and 0.7
   list(species, distrib)
   }
