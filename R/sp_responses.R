@@ -13,10 +13,15 @@
 #' @return A data.frame.
 #' @export
 #'
-#' @details The probability of detecting an individual in a pantrap (p) is calculated
-#'  from p = 1-(1-q)^N, where q is the number of pantraps deployed and N the
-#'  population abundances,using TERENO project data we estimate q and N values. According to this data, p is
-#'  gamma-distributed with Shape = 1.221913, Rate = 140.532379 and Scale: 0.007115798.
+#' @details Species phenological peak activity and phenological range are normally distributed using the provided means and sd.
+#' Species peak abundances are calculated from a lognormal distribution with meanlog = 2. This creates
+#' abundance distributions mirroring empirical observed patterns, and within the range of the expected
+#' absolute values for pollinators. Species responses are drawn from an uniform distribution according to the maximum and minimum
+#' values provided. Finally, species detectabilities follow a beta distribution with alpha = 1 and beta = 2
+#' and the probability of detecting an individual in a pantrap (p) is calculated from
+#' p = 1-(1-q)^N, where q is the number of pantraps deployed and N the population abundances,
+#' using TERENO project data we estimate q and N values. According to this data, p is
+#' gamma-distributed with Shape = 1.221913, Rate = 140.532379 and Scale: 0.007115798.
 #'
 #' @examples
 #' pool <- sp_pool(50)
@@ -53,7 +58,7 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #Assign to each species a detectability
   #detect <- runif(n_sp) #random. Note that when implemented, they will be weighted by species abundance.
   detect <- rbeta(n_sp, 1, 2) #Let's assume detectabilities are low.
-  detect_pan <- rgamma(n_sp, shape = 1.221913, rate = 140.532379, scale = 0.007115798) #Informed by TERENO data.
+  detect_pan <- rgamma(n_sp, shape = 1.221913, rate = 140.532379) #scale = 0.007115798 #Informed by TERENO data.
      #Now uncorrelated with above! This is prob of falling in a pantrap per indiv.
 
   #We can join this info at species level
