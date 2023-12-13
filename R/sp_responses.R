@@ -41,7 +41,10 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #Define phenological peaks and variances
   opt <- rnorm(n_sp, mean = pheno_peak_mean, sd = pheno_peak_sd) # Normally distributed it's a fair assumption. However, a bimodal spring-summer distribution can be implemented if necessary
   tol <- rnorm(n_sp, mean = pheno_range_mean, sd = pheno_range_sd) # species tolerances (phenology ranges)
-
+  opt <- ifelse(opt < 1, 10, opt)
+  tol <- ifelse(tol < 1, 10, tol) #set minimum phenological span to 10 days
+  opt <- ifelse(opt > 365, 365, opt)
+  tol <- ifelse(tol > 200, 200, tol) #and max.
   #Define species abundances following a lognormal distribution
   h <- ceiling(rlnorm(n_sp, meanlog = 2)) # max abundances per species ->
   #max(h) #this gives up to ~200 individuals per site of the dominant speices
