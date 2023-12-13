@@ -2,14 +2,14 @@ citHeader("To cite SimPoly in publications use:")
 
 citEntry(
   entry    = "Manual",
-  title    = "SimPoly",
-  author   = "Ignasi Bartomeus",
+  title    = "SimPoly: Generating EU-PoMS like datasets",
+  author   = "Ignasi Bartomeus, Nick Isaac and Oliver Schweiger",
   # journal  = ,
   year     = "2023",
   # volume   = ,
   # number   = ,
   # pages    = ,
   url      = "https://github.com/ibartomeus/SimPoly",
-  textVersion = paste("Bartomeus I, 2023. SimPoly.",
+  textVersion = paste("Bartomeus I, Isaac N and Schweiger O. 2023. SimPoly: Generating EU-PoMS like datasets",
                       "https://github.com/ibartomeus/SimPoly")
 )

@@ -29,7 +29,6 @@ The goal of SimPoly is to simulate a EU-PoMS like datasets with known parameters
 devtools::install_github("ibartomeus/SimPoly")
 ```
 
-
 ## Example
 
 ```{r}
@@ -74,7 +73,7 @@ There is one row per species, with the following columns:
 `tol` = spread #range or sdev? #IB: I think neither, I need to look specifics in coenocline function.  
 `h` = expected species abundance along a dominant-rare log normal distribution.  
 `slope` = trend in abundance per year on the abundance scale.    
-`detect` = detectability in probability of a species being detected in a transect (independent of its abundance).   
+`detect` = detectability in probability of a species being detected in a transect (independent of its abundance).  
 `detect_pan` = detectability in probability of a specimen falling in a pantrap.      
 
 Third, we sample the true abundance values expected at each sampling point.
@@ -92,7 +91,7 @@ There are 7414 observations: one per species per site.
 `siteID`: which site is it. 
 `round`: month of the year of this survey. 
 `species`: which species.  
-`abundance`: abundance during that visit # presumably this changes through the season, but I can't see how.  #IB: Yes, it does. 
+`abundance`: abundance during that visit.
 
 From this table we can calculate species richness per site
 
@@ -148,4 +147,4 @@ citation("SimPoly")
 
 ## Acknowledgements
 
-STING and the coenocliner package.
+STING, specially Nick Isaac and Oliver Schweiger and the coenocliner package.

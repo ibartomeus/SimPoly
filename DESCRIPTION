@@ -1,6 +1,6 @@
 Package: SimPoly
-Title: Like SimCity but for pollinator communities
-Version: 0.2
+Title: SimPoly:Generating EU-PoMS like datasets
+Version: 1.0
 Authors@R: 
   c(person("Ignasi", "Bartomeus", , "nacho.bartomeus@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7893-4389 ")),
