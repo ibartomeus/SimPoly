@@ -23,6 +23,13 @@ A data.frame.
 \description{
 This function creates for a given species pool, a data.frame of species observed per site and year.
 }
+\details{
+Species richness per site is assumed to follow a normal distribution
+with the provided mean and sd (Negative numbers are truncated). Species are
+assigned to each site randomly according to its expected distribution, ensuring
+that common species appear on more sites than rare species. Note that we
+assume no immigration / emigration.
+}
 \examples{
 pool <- sp_pool(50)
 define_sites_years(pool = pool, n_years = 3, n_sites = 10)

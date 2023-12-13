@@ -4,7 +4,7 @@
 \name{SimPoly-package}
 \alias{SimPoly}
 \alias{SimPoly-package}
-\title{SimPoly: Like SimCity but for pollinator communities}
+\title{SimPoly: SimPoly:Generating EU-PoMS like datasets}
 \description{
 Pollinator community simulator to implment power anlysis in EU-PoMS.
 }
