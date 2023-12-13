@@ -70,7 +70,7 @@ head(pars)
 
 There is one row per species, with the following columns:  
 `opt` = day since 1 january of maximum abundance.  
-`tol` = spread #range or sdev? #IB: I think neither, I need to look specifics in coenocline function.  
+`tol` = spread -> range.
 `h` = expected species abundance along a dominant-rare log normal distribution.  
 `slope` = trend in abundance per year on the abundance scale.    
 `detect` = detectability in probability of a species being detected in a transect (independent of its abundance).  
@@ -86,7 +86,7 @@ str(dat)
 head(dat)
 ```
 
-There are 7414 observations: one per species per site.  
+There as many observations per species per site.  
 `year`: an integer from 1-3 (as defined by n_years, above). 
 `siteID`: which site is it. 
 `round`: month of the year of this survey. 
@@ -147,4 +147,4 @@ citation("SimPoly")
 
 ## Acknowledgements
 
-STING, specially Nick Isaac and Oliver Schweiger and the coenocliner package.
+STING, JRC and specially Nick Isaac and Oliver Schweiger and the coenocliner package.
