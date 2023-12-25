@@ -9,12 +9,14 @@
 #' @param pheno_range_sd Numeric, sd of the species phenology ranges
 #' @param trend_max Numeric, minimum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.
 #' @param trend_min Numeric, máximum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.
+#' @param meanlog Numeric, parameter of the lognormal distribution to generate species abundances. Default 3
+#' @param sdlog Numeric, parameter of the lognormal distribution to generate species abundances. Default 0.8
 #'
 #' @return A data.frame.
 #' @export
 #'
 #' @details Species phenological peak activity and phenological range are normally distributed using the provided means and sd.
-#' Species peak abundances are calculated from a lognormal distribution with meanlog = 2. This creates
+#' Species peak abundances are calculated from a lognormal distribution with meanlog = 3 and sdlog = 0.8. This creates
 #' abundance distributions mirroring empirical observed patterns, and within the range of the expected
 #' absolute values for pollinators. Species responses are drawn from an uniform distribution according to the maximum and minimum
 #' values provided. Finally, species detectabilities follow a beta distribution with alpha = 1 and beta = 2
@@ -29,7 +31,7 @@
 #' sp_responses(site_years = site_years)
 sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
                          pheno_range_mean = 25, pheno_range_sd = 5,
-                         trend_max = 1.1, trend_min = 0.9){
+                         trend_max = 1.1, trend_min = 0.9, meanlog = 3, sdlog = 0.8){
   #Define species responses.
   species <- unique(site_years$species)
   n_sp <- length(species)
@@ -46,10 +48,10 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   opt <- ifelse(opt > 365, 365, opt)
   tol <- ifelse(tol > 200, 200, tol) #and max.
   #Define species abundances following a lognormal distribution
-  h <- ceiling(rlnorm(n_sp, meanlog = 3)) # max abundances per species ->
+  h <- ceiling(rlnorm(n_sp, meanlog = meanlog, sdlog = sdlog)) # max abundances per species ->
   #max(h) #this gives up to ~200 individuals per site of the dominant speices
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
-  h <- ifelse(h > 500, 500, h) #cap maximum abundance
+  #h <- ifelse(max(h) > 20*mean(h), 20*mean(h), h) #cap maximum abundance
   #JRC asks about the possibility of an abundance-dependent assignation of phenological tolerances.
 
   #We can define also here the responses expected (i.e. trend).
