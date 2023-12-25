@@ -46,10 +46,10 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   opt <- ifelse(opt > 365, 365, opt)
   tol <- ifelse(tol > 200, 200, tol) #and max.
   #Define species abundances following a lognormal distribution
-  h <- ceiling(rlnorm(n_sp, meanlog = 2)) # max abundances per species ->
+  h <- ceiling(rlnorm(n_sp, meanlog = 3)) # max abundances per species ->
   #max(h) #this gives up to ~200 individuals per site of the dominant speices
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
-  h <- ifelse(h > 100, 100, h) #cap maximum abundance
+  h <- ifelse(h > 500, 500, h) #cap maximum abundance
   #JRC asks about the possibility of an abundance-dependent assignation of phenological tolerances.
 
   #We can define also here the responses expected (i.e. trend).
