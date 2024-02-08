@@ -31,7 +31,7 @@
 #' sp_responses(site_years = site_years)
 sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
                          pheno_range_mean = 25, pheno_range_sd = 5,
-                         trend_max = 1.1, trend_min = 0.9, meanlog = 3, sdlog = 0.8){
+                         trend_max = 1.1, trend_min = 0.9, meanlog = 3.5, sdlog = 0.6){
   #Define species responses.
   species <- unique(site_years$species)
   n_sp <- length(species)
@@ -53,6 +53,10 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
   #h <- ifelse(max(h) > 20*mean(h), 20*mean(h), h) #cap maximum abundance
   #JRC asks about the possibility of an abundance-dependent assignation of phenological tolerances.
+
+  #x <- rlnorm(1214, meanlog = 3.5, sdlog = 0.6)
+  #summary(x)
+  #hist(x)
 
   #We can define also here the responses expected (i.e. trend).
   #We assume a multiplicative slope (-1 and 1) affecting the population per year.
