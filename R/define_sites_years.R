@@ -24,23 +24,47 @@ define_sites_years <- function(pool, n_years, n_sites,
                              rich_mean = 30, rich_sd = 5){
   #defensive programming here (i.e. check if numeric and range)
   species <- pool[[1]]
-  distib <- pool[[2]]
+  distrib <- pool[[2]]
   #calculate expected richness per site
   richness <- ceiling(rnorm(n_sites, mean = rich_mean, sd = rich_sd))
   #hist(richness) #rpois possible, but a quick visual inspection of data suggest rnorm is good enough.
   #Avoid negative numbers.
   richness <- ifelse(richness < 1, yes = 1, no = richness) #not too elegant.
   #create a vector of species per site over years. We will try to use data.frames to store the outputs
-  #Start by creating the site-species link
-  data <- data.frame(siteID = NA, species = NA)
-  for(i in 1:n_sites){
-    temp <- sample(species, size = richness[i], replace = FALSE, prob = distib) #size can be variable
-    temp2 <- data.frame(siteID = rep(paste0("site_", i), length(temp)),
-                        species = temp)
-    data <- rbind(data, temp2)
-  }
-  data <- data[-1,]
 
+  #igraoh solution which fixes site richness and species occupancy simultaneously:
+  library(igraph)
+  deg1 <- round(sum(richness) * (distrib/sum(distrib)), digits = 0)
+  deg1 <- ifelse(deg1 > n_sites, 10, deg1)
+  #sum(deg1) - sum(deg2)
+  if(sum(deg1) < sum(deg2)){
+    i <- 1
+    while(sum(deg1) < sum(deg2)){
+      if(deg1[i] < n_sites){deg1[i] <- deg1[i] + 1}
+      if(i < length(deg1)){i <- i +1} else{i <- 1}
+    }
+  }
+  if(sum(deg1) > sum(deg2)){
+    i <- 1
+    while(sum(deg1) < sum(deg2)){
+      if(deg1[i] > 1){deg1[i] <- deg1[i] - 1}
+      if(i < length(deg1)){i <- i +1} else{i <- 1}
+    }
+  }
+  #sum(deg1) - sum(deg2)
+  #remove 0's
+  deg1.1 <- deg1[-which(deg1 == 0)]
+  deg2 <- richness
+  #is_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2))
+  ntw <- sample_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2)) %>%
+    set_vertex_attr(name = "type", value = degree(., mode = "out") > 0)
+  matrix_ <- as_incidence_matrix(ntw)
+  #plot(colSums(matrix_), distrib[-which(deg1 == 0)]) #fair enough
+  rownames(matrix_) <- paste0("site_", 1:n_sites)
+  colnames(matrix_) <- species[-which(deg1 == 0)]
+  data <- melt(matrix_, varnames = c("siteID", "species"))
+  data <- subset(data, value > 0)[,-3]
+  data
   #And then simply stack as many years as needed
   #We assume no immigration / emigration at this point. i.e. closed populations
   #But species can get extinct over time (see next functions).
@@ -54,4 +78,37 @@ define_sites_years <- function(pool, n_years, n_sites,
   #head(data)
   data
 }
+
+#SOULTION filling per sites (it underestimates species occ)
+data <- data.frame(siteID = NA, species = NA)
+for(i in 1:n_sites){
+  temp <- sample(species, size = richness[i], replace = FALSE, prob = distib) #size can be variable
+  temp2 <- data.frame(siteID = rep(paste0("site_", i), length(temp)),
+                      species = temp)
+  data <- rbind(data, temp2)
+}
+data <- data[-1,]
+
+#SOLUTION filling per species (it understimates species gamma div, or produces higher richness values per site)
+#Let's distribute species across sites accroding to its occupancy/distribution
+longdata <- data.frame(siteID = paste0("site_", 1:n_sites),
+                       richness = richness, active = 1)
+#Asign first species
+longdata[,4] <- sample(c(0,1), nrow(longdata), replace = T, prob = c(distrib[1], 1-distrib[1]))
+colnames(longdata)[4] <- species[1]
+for(i in 2:length(species)){
+  #for each species, let's distributed among sites accroding to its abundance
+  temp <- subset(longdata, active == 1)
+  temp[,3+i] <- sample(c(1,0), nrow(temp), replace = T, prob = c(distrib[i], 1-distrib[i]))
+  colnames(temp)[3+i] <- species[i]
+  longdata <- merge(longdata, temp[,c(1,3+i)], by = "siteID", all.x = TRUE, sort = F)
+  longdata$active[which(rowSums(longdata[,-c(1:3)], na.rm = T) >= longdata$richness)] <- 0
+} #SLOWWW
+#check richness is good
+all.equal(rowSums(longdata[,-c(1:3)], na.rm = T), longdata$richness)
+#check distributions makes sense
+hist(colSums(longdata[,-c(1:3)]))
+#now lets go to long format
+library(dplyr)
+melt(longdata)
 
