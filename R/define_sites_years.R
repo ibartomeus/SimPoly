@@ -79,36 +79,4 @@ define_sites_years <- function(pool, n_years, n_sites,
   data
 }
 
-#SOULTION filling per sites (it underestimates species occ)
-data <- data.frame(siteID = NA, species = NA)
-for(i in 1:n_sites){
-  temp <- sample(species, size = richness[i], replace = FALSE, prob = distib) #size can be variable
-  temp2 <- data.frame(siteID = rep(paste0("site_", i), length(temp)),
-                      species = temp)
-  data <- rbind(data, temp2)
-}
-data <- data[-1,]
-
-#SOLUTION filling per species (it understimates species gamma div, or produces higher richness values per site)
-#Let's distribute species across sites accroding to its occupancy/distribution
-longdata <- data.frame(siteID = paste0("site_", 1:n_sites),
-                       richness = richness, active = 1)
-#Asign first species
-longdata[,4] <- sample(c(0,1), nrow(longdata), replace = T, prob = c(distrib[1], 1-distrib[1]))
-colnames(longdata)[4] <- species[1]
-for(i in 2:length(species)){
-  #for each species, let's distributed among sites accroding to its abundance
-  temp <- subset(longdata, active == 1)
-  temp[,3+i] <- sample(c(1,0), nrow(temp), replace = T, prob = c(distrib[i], 1-distrib[i]))
-  colnames(temp)[3+i] <- species[i]
-  longdata <- merge(longdata, temp[,c(1,3+i)], by = "siteID", all.x = TRUE, sort = F)
-  longdata$active[which(rowSums(longdata[,-c(1:3)], na.rm = T) >= longdata$richness)] <- 0
-} #SLOWWW
-#check richness is good
-all.equal(rowSums(longdata[,-c(1:3)], na.rm = T), longdata$richness)
-#check distributions makes sense
-hist(colSums(longdata[,-c(1:3)]))
-#now lets go to long format
-library(dplyr)
-melt(longdata)
 
