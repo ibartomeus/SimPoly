@@ -20,4 +20,5 @@ Imports:
     stats,
     reshape,
     reshape2,
-    coenocliner
+    coenocliner, 
+    igraph

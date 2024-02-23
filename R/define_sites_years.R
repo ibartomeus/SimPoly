@@ -33,7 +33,6 @@ define_sites_years <- function(pool, n_years, n_sites,
   #create a vector of species per site over years. We will try to use data.frames to store the outputs
 
   #igraoh solution which fixes site richness and species occupancy simultaneously:
-  library(igraph)
   deg1 <- round(sum(richness) * (distrib/sum(distrib)), digits = 0)
   deg1 <- ifelse(deg1 > n_sites, 10, deg1)
   #sum(deg1) - sum(deg2)
@@ -56,13 +55,13 @@ define_sites_years <- function(pool, n_years, n_sites,
   deg1.1 <- deg1[-which(deg1 == 0)]
   deg2 <- richness
   #is_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2))
-  ntw <- sample_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2)) %>%
-    set_vertex_attr(name = "type", value = degree(., mode = "out") > 0)
-  matrix_ <- as_incidence_matrix(ntw)
+  ntw <- igraph::sample_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2)) %>%
+    igraph::set_vertex_attr(name = "type", value = degree(., mode = "out") > 0)
+  matrix_ <- igraph::as_incidence_matrix(ntw)
   #plot(colSums(matrix_), distrib[-which(deg1 == 0)]) #fair enough
   rownames(matrix_) <- paste0("site_", 1:n_sites)
   colnames(matrix_) <- species[-which(deg1 == 0)]
-  data <- melt(matrix_, varnames = c("siteID", "species"))
+  data <- reshape2::melt(matrix_, varnames = c("siteID", "species"))
   data <- subset(data, value > 0)[,-3]
   data
   #And then simply stack as many years as needed
