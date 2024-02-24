@@ -11,7 +11,9 @@ sp_responses(
   pheno_range_mean = 25,
   pheno_range_sd = 5,
   trend_max = 1.1,
-  trend_min = 0.9
+  trend_min = 0.9,
+  meanlog = 3.5,
+  sdlog = 0.6
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ sp_responses(
 \item{trend_max}{Numeric, minimum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.}
 
 \item{trend_min}{Numeric, máximum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.}
+
+\item{meanlog}{Numeric, parameter of the lognormal distribution to generate species abundances. Default 3}
+
+\item{sdlog}{Numeric, parameter of the lognormal distribution to generate species abundances. Default 0.8}
 }
 \value{
 A data.frame.
@@ -37,7 +43,7 @@ This function defines for each species its phenology, typical abundance, detecta
 }
 \details{
 Species phenological peak activity and phenological range are normally distributed using the provided means and sd.
-Species peak abundances are calculated from a lognormal distribution with meanlog = 2. This creates
+Species peak abundances are calculated from a lognormal distribution with meanlog = 3 and sdlog = 0.8. This creates
 abundance distributions mirroring empirical observed patterns, and within the range of the expected
 absolute values for pollinators. Species responses are drawn from an uniform distribution according to the maximum and minimum
 values provided. Finally, species detectabilities follow a beta distribution with alpha = 1 and beta = 2

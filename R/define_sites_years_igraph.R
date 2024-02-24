@@ -20,7 +20,7 @@
 #' @examples
 #' pool <- sp_pool(50)
 #' define_sites_years(pool = pool, n_years = 3, n_sites = 10)
-define_sites_years <- function(pool, n_years, n_sites,
+define_sites_years_igraph <- function(pool, n_years, n_sites,
                              rich_mean = 30, rich_sd = 5){
   #defensive programming here (i.e. check if numeric and range)
   species <- pool[[1]]
@@ -33,8 +33,10 @@ define_sites_years <- function(pool, n_years, n_sites,
   #create a vector of species per site over years. We will try to use data.frames to store the outputs
 
   #igraoh solution which fixes site richness and species occupancy simultaneously:
+  #sum_ <- round(n_sites/ max(distrib/sum(distrib)), digits = 0)
   deg1 <- round(sum(richness) * (distrib/sum(distrib)), digits = 0)
-  deg1 <- ifelse(deg1 > n_sites, 10, deg1)
+  deg1 <- ifelse(deg1 > n_sites, n_sites, deg1)
+  deg2 <- richness
   #sum(deg1) - sum(deg2)
   if(sum(deg1) < sum(deg2)){
     i <- 1
@@ -45,25 +47,33 @@ define_sites_years <- function(pool, n_years, n_sites,
   }
   if(sum(deg1) > sum(deg2)){
     i <- 1
-    while(sum(deg1) < sum(deg2)){
+    while(sum(deg1) > sum(deg2)){
       if(deg1[i] > 1){deg1[i] <- deg1[i] - 1}
       if(i < length(deg1)){i <- i +1} else{i <- 1}
     }
   }
   #sum(deg1) - sum(deg2)
+  #hist(deg1)
   #remove 0's
-  deg1.1 <- deg1[-which(deg1 == 0)]
-  deg2 <- richness
-  #is_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2))
-  ntw <- igraph::sample_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2)) %>%
-    igraph::set_vertex_attr(name = "type", value = degree(., mode = "out") > 0)
+  if(any(deg1 == 0)){
+    deg1.1 <- deg1[-which(deg1 == 0)]
+  } else{
+    deg1.1 <- deg1
+  }
+  #igraph::is_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2))
+  ntw <- igraph::sample_degseq(c(deg1.1, 0 * deg2), c(0 * deg1.1, deg2))
+  ntw <- igraph::set_vertex_attr(ntw, name = "type", value = igraph::degree(ntw, mode = "out") > 0)
   matrix_ <- igraph::as_incidence_matrix(ntw)
   #plot(colSums(matrix_), distrib[-which(deg1 == 0)]) #fair enough
   rownames(matrix_) <- paste0("site_", 1:n_sites)
-  colnames(matrix_) <- species[-which(deg1 == 0)]
+  if(any(deg1 == 0)){
+    colnames(matrix_) <- species[-which(deg1 == 0)]
+  } else{
+    colnames(matrix_) <- species
+  }
   data <- reshape2::melt(matrix_, varnames = c("siteID", "species"))
   data <- subset(data, value > 0)[,-3]
-  data
+  #data
   #And then simply stack as many years as needed
   #We assume no immigration / emigration at this point. i.e. closed populations
   #But species can get extinct over time (see next functions).
@@ -77,5 +87,6 @@ define_sites_years <- function(pool, n_years, n_sites,
   #head(data)
   data
 }
+
 
 
