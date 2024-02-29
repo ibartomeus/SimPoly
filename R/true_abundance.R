@@ -44,8 +44,9 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
   site_names <- unique(data$siteID)
   #mus <- list() #store in lists if needed (do we need to keep track of this?)
   #For now we store final counts only
-  simnbs <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA)
-  for(j in 1:n_years){
+  #simnbs <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA)
+  simnbs <- lapply(1:n_years, function(j){
+    #for(j in 1:n_years){
     #select year j
     year_temp <- subset(data, year == j)
     #We add white noise to h as a function of year (yearly fluctuations)
@@ -59,7 +60,9 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
     #plot(pars$h2, pars$h)
     #And a directional noise (red noise) based on species responses.
     pars$h_y <- pars$h2 * ((pars$slope)^j) #can never get negative, just terribly small.
-    for(i in 1:length(site_names)){
+
+    #for(i in 1:length(site_names)){
+    simnbs1 <- lapply(1:length(site_names), function(i){
       #select site i
       site_temp <- subset(data, siteID == site_names[i])
       #select species present in site i
@@ -71,7 +74,7 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
       #plot(mus[[i]], lty = "solid", type = "l", ylim = c(0,100), xlab = "jday", ylab = "Abundance", las= 1)
       #create observed community
       simnb <- coenocliner::coenocline(rounds, responseModel = "gaussian", params = pars_i,
-                          countModel = "negbin", countParams = list(alpha = 0.5))
+                                       countModel = "negbin", countParams = list(alpha = 0.5))
       #transform the sim to long format
       sim <- as.data.frame(simnb) #we lose species names
       colnames(sim) <- pars_temp$species
@@ -82,12 +85,12 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
       sim_melted$year <- j
       sim_melted <- sim_melted[,c("rounds", "jday", "variable", "value", "siteID", "year")]
       colnames(sim_melted) <- c("round", "jday", "species", "abundance", "siteID", "year")
-      simnbs <- rbind(simnbs, sim_melted[,c("year", "siteID", "round", "jday", "species", "abundance")])
-    }
-    simnbs <- simnbs[-1,]
+      return(sim_melted[,c("year", "siteID", "round", "jday", "species", "abundance")])
+      #simnbs <- rbind(simnbs, sim_melted[,c("year", "siteID", "round", "jday", "species", "abundance")])
+    })
+    #simnbs <- simnbs[-1,] # not sure what this is for
     #head(simnbs)
-  }
-  #head(simnbs)
-  #dim(simnbs) # 3y * 10 sites *30 sp *8 rounds <- ~ 7200
-  simnbs
+    return(do.call(rbind,  simnbs1))
+  })
+  return(do.call(rbind,  simnbs))
 }
