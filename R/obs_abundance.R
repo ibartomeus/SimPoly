@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' pool <- sp_pool(50)
-#' site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+#' site_years <- define_sites_years_rich(pool = pool, n_years = 3, n_sites = 10)
 #' pars <- sp_responses(site_years = site_years)
 #' abun <- true_abundance(n_round = 8,
 #'                                  site_years = site_years,
@@ -29,28 +29,26 @@
 #' obs_abundance(true_abundance = abun, sp_responses = pars)
 #'
 obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed = 0.2, pantrap = TRUE, n_pan = 5){
-  #require(reshape)
   #set fraction of true abundance observed.
   #fraction_observed <- fraction_observed # we detect i.e. half the existing individuals that day
   #noise can be probably added? Not for now.
   sim_data <- true_abundance
+  sim_data$species <- as.character(sim_data$species)
+  true_abundance <-  NULL
   pars <- sp_responses
-  rounds <- sort(unique(true_abundance$jday))
+  sp_responses <- NULL
+  rounds <- sort(unique(sim_data$jday))
   round_tesaurus <- data.frame(round = 1:length(rounds), jday = rounds)
-  #placeholder to save generated data
-  out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
-                    obs = NA, detect_pan = NA, total_pantraps = NA, presences_pan = NA)
-  #expand per individual catch so each indivdual is a row
-  indiv <-  reshape::untable(sim_data[,c("year", "siteID", "round", "jday", "species")],
-                             num = sim_data[,c("abundance")])
-  #add detectabilities (stored in pars)
-  indiv_det <- merge(indiv, pars[,c("species", "detect", "detect_pan")], all.x = TRUE)
-  #keep track of site names
   site_names <- unique(sim_data$siteID)
   n_years <- max(sim_data$year)
+  #alternative that might be faster
+  #Add detectabilities
+  sim_data <- dplyr::left_join(sim_data, pars[,c("species", "detect", "detect_pan")], by = "species")
+  out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
+                    obs = NA, total_pantraps = NA, presences_pan = NA)
   #loop trough years
   for(k in 1:n_years){
-    year_temp <- subset(indiv_det, year == k)
+    year_temp <- subset(sim_data, year == k)
     #loop through sites
     for(j in 1:length(site_names)){
       #select site i
@@ -59,46 +57,47 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
       for(i in 1:max(sim_data$round)){
         sr_temp <- subset(site_temp, round == i)
         #if there are records
-        if(nrow(sr_temp) > 0){
-          #sample x individuals randomly prop to its detectability
-          sample_size <- nrow(sr_temp)*fraction_observed #can add noise here if desired
-          obs_raw <- sample(sr_temp$species, size =  sample_size,
-                            replace = FALSE, prob = sr_temp$detect)
-          #recover true abundance and keep detect_pan
-          summary_obs_raw <- tapply(sr_temp$detect, sr_temp$species, length)
-          summary_detect_raw <- tapply(sr_temp$detect_pan, sr_temp$species, max)
-          #and observed abundance
+        if(nrow(sr_temp) > 0 & sum(sr_temp$abundance) > 0){
+          #expand the vector
+          sampler <- reshape::untable(sr_temp[,c("year", "siteID", "round", "jday", "species")],
+                   num = sr_temp[,c("abundance")])
+          #calculate the number of individuals detected
+          sample_size <- ceiling(nrow(sampler)*fraction_observed) #can add noise here if desired
+          #and sample this number from the vector
+          obs_raw <- sample(sampler$species, size =  sample_size,
+                    replace = FALSE, prob = sampler$detect)
+          #pool per sp again
           obs <- table(obs_raw)
-          #rescue non sampled species
-          if(length(summary_obs_raw) != length(obs)){
-            mised <- summary_obs_raw[which(!names(summary_obs_raw) %in% names(obs))]
-            mised[1:length(mised)] <- 0
-            obs <- append(obs, values = mised)
-            obs <- obs[names(summary_obs_raw)]
-          }
-          obs_sp <- data.frame(year = rep(k, length(summary_obs_raw)),
-                               siteID = rep(site_names[j], length(summary_obs_raw)),
-                               round = rep(i, length(summary_obs_raw)),
-                               jday = round_tesaurus$jday[which(round_tesaurus$round == i)],
-                               species = names(summary_obs_raw),
-                               abundance = as.vector(summary_obs_raw),
-                               obs = as.vector(obs),
-                               detect_pan = as.vector(summary_detect_raw),
-                               total_pantraps = NA, presences_pan = NA)
+          obs <- data.frame(species = names(obs), obs = as.vector(obs))
+          sr_temp <- dplyr::left_join(sr_temp, obs, by = "species")
+          sr_temp$obs[is.na(sr_temp$obs)] <- 0
           if(pantrap){
-            obs_sp$total_pantraps <- n_pan
+            sr_temp$total_pantraps <- n_pan
             #sample
-            for(l in 1:length(obs_sp$species)){
+            for(l in 1:length(sr_temp$species)){
               #calculate probability of detecting a species as function of sampling size
-              pan_det_prob <- ifelse(obs_sp$abundance[l] * obs_sp$detect_pan[l] < 1, obs_sp$abundance[l] * obs_sp$detect_pan[l], 1)
-              per_pantrap <- rbinom(n = obs_sp$total_pantraps[l], size = 1, prob = pan_det_prob)
-              obs_sp$presences_pan[l] <- sum(per_pantrap)
+              pan_det_prob <- fast_ifelse(sr_temp$abundance[l] * sr_temp$detect_pan[l] < 1, sr_temp$abundance[l] * sr_temp$detect_pan[l], 1)
+              per_pantrap <- rbinom(n = sr_temp$total_pantraps[l], size = 1, prob = pan_det_prob)
+              sr_temp$presences_pan[l] <- sum(per_pantrap)
               #binomial process with n trials, where n is the number of pan trap
               #locations at each site. The outcome of this process is then the number of traps that contain the species of interest.
             }
+          } else{
+            sr_temp$total_pantraps <- NA
+            sr_temp$presences_pan <- NA
           }
-          out <- rbind(out, obs_sp)
+          out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
           if(i == 1 & j == 1  & k == 1){out <- out[-1,]}
+        } else{
+          sr_temp$obs <- 0
+          if(pantrap){
+            sr_temp$total_pantraps <- 0
+            sr_temp$presences_pan <- 0
+          } else{
+            sr_temp$total_pantraps <- NA
+            sr_temp$presences_pan <- NA
+          }
+          out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
         }
         #print(paste("round", i ,"calculated at", Sys.time()))
       }
@@ -106,7 +105,5 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
     }
     print(paste("year", k ,"calculated at", Sys.time()))
   }
-  out <- out[,-8] #deleting empty first row and detect_pan to avoid confusions.
   out
 }
-
