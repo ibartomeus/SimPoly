@@ -71,7 +71,8 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
      #Now uncorrelated with above! This is prob of falling in a pantrap per indiv.
 
   #We can join this info at species level
-  pars <- data.frame(species = species,  opt = opt, tol = tol, h = h, slope = slope,
-                     detect = detect, detect_pan = detect_pan) # put in a matrix
+  pars <- data.frame(species = species,  opt = round(opt, 2),
+                     tol = round(tol, 2), h = h, slope = round(slope, 2),
+                     detect = round(detect, 4), detect_pan = round(detect_pan, 4)) # put in a matrix
   pars
 }

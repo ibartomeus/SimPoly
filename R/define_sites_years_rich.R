@@ -41,9 +41,9 @@ define_sites_years_rich <- function(pool, n_years, n_sites,
     temp <- subset(longdata, active == 1)
     temp[,3+i] <- sample(c(1,0), nrow(temp), replace = T, prob = c(distrib[i], 1-distrib[i]))
     colnames(temp)[3+i] <- species[i]
-    longdata <- merge(longdata, temp[,c(1,3+i)], by = "siteID", all.x = TRUE, sort = F)
+    longdata <- dplyr::left_join(longdata, temp[,c(1,3+i)], by = "siteID")
     longdata$active[which(rowSums(longdata[,-c(1:3)], na.rm = T) >= longdata$richness)] <- 0
-  } #SLOWWW
+  } #slow-ish
   #check richness is good
   #all.equal(rowSums(longdata[,-c(1:3)], na.rm = T), longdata$richness)
   #check distributions makes sense
@@ -55,7 +55,8 @@ define_sites_years_rich <- function(pool, n_years, n_sites,
   #length(species_occ[which(species_occ<1)]) #for 1000 sp in 100 sites, 83% never observed.
   #length(species_occ[-which(species_occ<1)])
   #now lets go to long format
-  data <- reshape2::melt(longdata[,-c(2,3)], variable.name = "species")
+  data <- reshape2::melt(data = longdata[,-c(2,3)], id.vars = "siteID",
+                         variable.name = "species", )
   data <- subset(data, value > 0)[,-3]
   #data
   #And then simply stack as many years as needed
