@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' pool <- sp_pool(50)
-#' define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+#' define_sites_years_rich(pool = pool, n_years = 3, n_sites = 10)
 define_sites_years_rich <- function(pool, n_years, n_sites,
                                rich_mean = 30, rich_sd = 5){
   #defensive programming here (i.e. check if numeric and range)
@@ -29,21 +29,34 @@ define_sites_years_rich <- function(pool, n_years, n_sites,
   richness <- ceiling(rnorm(n_sites, mean = rich_mean, sd = rich_sd))
   #hist(richness) #rpois possible, but a quick visual inspection of data suggest rnorm is good enough.
   #Avoid negative numbers.
-  richness <- ifelse(richness < 1, yes = 1, no = richness) #not too elegant.
+  richness <- fast_ifelse(richness < 1, yes = 1, no = richness) #not too elegant.
   #create a vector of species per site over years. We will try to use data.frames to store the outputs
   longdata <- data.frame(siteID = paste0("site_", 1:n_sites),
                          richness = richness, active = 1)
-  #Asign first species
+  #Asign first species:
   longdata[,4] <- sample(c(0,1), nrow(longdata), replace = T, prob = c(distrib[1], 1-distrib[1]))
   colnames(longdata)[4] <- species[1]
   for(i in 2:length(species)){
-    #for each species, let's distributed among sites accroding to its abundance
+    #for each species, let's distributed among sites according to its abundance
     temp <- subset(longdata, active == 1)
     temp[,3+i] <- sample(c(1,0), nrow(temp), replace = T, prob = c(distrib[i], 1-distrib[i]))
     colnames(temp)[3+i] <- species[i]
     longdata <- dplyr::left_join(longdata, temp[,c(1,3+i)], by = "siteID")
     longdata$active[which(rowSums(longdata[,-c(1:3)], na.rm = T) >= longdata$richness)] <- 0
   } #slow-ish
+  #using lapply #unsuccesful
+  # longdata_full <- lapply(1:length(species), function(sp) {
+  #   # Subset active sites
+  #   temp <- subset(longdata, active == 1)
+  #   # Distribute species according to abundance
+  #   temp[, paste0(species[sp])] <- sample(c(1, 0), nrow(temp), replace = T, prob = c(distrib[sp], 1 - distrib[sp]))
+  #   # Join with longdata
+  #   longdata <- dplyr::left_join(longdata, temp[, c("siteID",paste0(species[sp]))], by = "siteID")
+  #   # Update active status
+  #   longdata$active[which(rowSums(longdata[, -c(1:3), drop = F], na.rm = T) >= longdata$richness)] <- 0
+  #   return(longdata)
+  # })
+  # do.call(cbind, longdata_full[,4])
   #check richness is good
   #all.equal(rowSums(longdata[,-c(1:3)], na.rm = T), longdata$richness)
   #check distributions makes sense
