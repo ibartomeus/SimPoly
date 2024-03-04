@@ -91,7 +91,6 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
             sr_temp$presences_pan <- NA
           }
           #out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
-          #if(i == 1 & j == 1  & k == 1){out <- out[-1,]} # NI to Nacho - I had to delete this line: it may cause issues elsewhere
         } else{
           sr_temp$obs <- 0
           if(pantrap){
