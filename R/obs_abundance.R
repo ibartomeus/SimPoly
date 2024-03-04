@@ -44,17 +44,21 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
   #alternative that might be faster
   #Add detectabilities
   sim_data <- dplyr::left_join(sim_data, pars[,c("species", "detect", "detect_pan")], by = "species")
-  out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
-                    obs = NA, total_pantraps = NA, presences_pan = NA)
+  #out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
+  #                  obs = NA, total_pantraps = NA, presences_pan = NA)
   #loop trough years
-  for(k in 1:n_years){
+  out <- lapply(1:n_years, function(k){
+  #for(k in 1:n_years){
     year_temp <- subset(sim_data, year == k)
     #loop through sites
-    for(j in 1:length(site_names)){
+    siteRes <- lapply(1:length(site_names), function(j){
+    #for(j in 1:length(site_names)){
       #select site i
       site_temp <- subset(year_temp, siteID == site_names[j])
       #loop through rounds
-      for(i in 1:max(sim_data$round)){
+      #for(i in 1:max(sim_data$round)){
+      roundRes <- lapply(1:max(sim_data$round), function(i){
+
         sr_temp <- subset(site_temp, round == i)
         #if there are records
         if(nrow(sr_temp) > 0 & sum(sr_temp$abundance) > 0){
@@ -86,8 +90,8 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
             sr_temp$total_pantraps <- NA
             sr_temp$presences_pan <- NA
           }
-          out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
-          if(i == 1 & j == 1  & k == 1){out <- out[-1,]}
+          #out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
+          #if(i == 1 & j == 1  & k == 1){out <- out[-1,]} # NI to Nacho - I had to delete this line: it may cause issues elsewhere
         } else{
           sr_temp$obs <- 0
           if(pantrap){
@@ -97,13 +101,16 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
             sr_temp$total_pantraps <- NA
             sr_temp$presences_pan <- NA
           }
-          out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
+          #out <- dplyr::bind_rows(out, sr_temp[,c(1:6,9,10,11)])
         }
         #print(paste("round", i ,"calculated at", Sys.time()))
-      }
+        return(sr_temp[,c(1:6,9,10,11)])
+      })
       #print(paste("site", j ,"calculated at", Sys.time()))
-    }
+      return(do.call(rbind, roundRes))
+    })
     print(paste("year", k ,"calculated at", Sys.time()))
-  }
-  out
+    return(do.call(rbind, siteRes))
+  })
+  out <- do.call(rbind, out)
 }
