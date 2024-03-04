@@ -31,7 +31,7 @@ is a call to `sp_pool()`, which simply defines the number of species
 species.
 
 ``` r
-site_years <- define_sites_years(pool = sp_pool(pool = 1000, 
+site_years <- define_sites_years_rich(pool = sp_pool(pool = 1000, 
                                                 mean_occ = 0.25),
                                  n_years = 7, n_sites = 100)
 ```
@@ -45,8 +45,8 @@ length(unique(site_years$siteID))
 length(unique(site_years$species))
 ```
 
-Note that the number of species in the dataset is only `89`, compared
-with `100` in the species pool. This reflects stochasticity in how the
+Note that the number of species in the dataset is lower
+than the species pool. This reflects stochasticity in how the
 species are assigned to sites.
 
 Second, we specify species attributes such as phenology, abundance and
