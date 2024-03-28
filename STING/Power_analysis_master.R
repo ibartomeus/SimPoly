@@ -1,5 +1,5 @@
 ## This script aims to answer which sample size is needed to detect a given decline per MS.
-## Original code prepared by Nick Isaac on 2020-03-19; minimally adapted by Chiara Polce 
+## Original code prepared by Nick Isaac on 2020-03-19; minimally adapted by Chiara Polce
 ## to plot and save the results for the 27 MS and further edited by Nacho Bartomeus.
 
 ## install/load these libraries----
@@ -14,9 +14,9 @@ library(ggforce)
 # Results generated using SimPoly 1.3 with parameters read from XXXX.csv file and run with XXX.R file.
 # Chiara, can you fill the XXXX above and send to me those files to keep them toguether?
 
-resultsdir <-"All_Results/"
+resultsdir <-"STING/All_Results/"
 resFiles <- list.files(resultsdir, recursive = TRUE)
-length(resFiles) #[1] 6480 
+length(resFiles) #[1] 6480
 ## There are 810 files of results: 27MS * 10 replicates * 3 trends * 8 levels of number of sites
 
 ## Read them all into one object (list)
@@ -27,12 +27,12 @@ results <- lapply(resFiles, function(filename) {
 
 #explore the data structure
 str(results[[1]])
-results[[1]]$md$simpars #trend is pre-calculated here, 
+results[[1]]$md$simpars #trend is pre-calculated here,
     #and IB thinks can be re-interpreted to 1%, 5% 10% as here we are using a wrong parameter.
-    #done below. 
+    #done below.
 
 ## Prepare output----
-## Create a dataframe with one row per simulation file. Populate it initially 
+## Create a dataframe with one row per simulation file. Populate it initially
 # from the data object
 data <- lapply(results, function(x) cbind(name  = x$outFileName, x$md$simpars, x$md$settings))
 data <- do.call(rbind, data)
@@ -40,10 +40,10 @@ data <- do.call(rbind, data)
 
 temp <- strsplit(data$name, split = "_")
 data$MS <- sapply(temp, function(x) x[[1]])
-#nSite is not updated in the file names; this can be possible fixed during the process, but IB is 
+#nSite is not updated in the file names; this can be possible fixed during the process, but IB is
     #fixing it below.
 #data$nSite <- as.numeric(gsub(sapply(temp, function(x) x[[4]]), patt = "sites", repl=""))
-data$nSite <- NA 
+data$nSite <- NA
 data$replicate <- as.numeric(sapply(temp, function(x) x[[7]]))
 
 ## Take a look at the contents
@@ -53,7 +53,7 @@ summary(data)
 
 ## The trend is the multispecies growth rate per year fixed at 1, 5 and 10%. See below.
 ## Note that all files in this set have the same number of transects, rounds and years.
-## As noted above, the true trend might be not properly calculated. 
+## As noted above, the true trend might be not properly calculated.
 
 ## Trend Estimates-----
 ## First, define a function to extract the information we want to get from each file.
@@ -68,17 +68,17 @@ getStats <- function(x, nsim = 100) {
   return(ms_post)
 }
 
-## This function returns four numbers: 
-## - The first column is a simple mean across species. 
-## - The second column is the mean accounting for uncertainty in the species trends. 
-## - The third column is the standard deviation around that mean (a quasi-Bayesian estimate). 
-## - This fourth column is the proportion of the simulated multispecies trends that are below zero 
+## This function returns four numbers:
+## - The first column is a simple mean across species.
+## - The second column is the mean accounting for uncertainty in the species trends.
+## - The third column is the standard deviation around that mean (a quasi-Bayesian estimate).
+## - This fourth column is the proportion of the simulated multispecies trends that are below zero
 ## There is also an attribute (post) that contains the full distribution.
 
 #eff <- results[[1]]$modelEff #for debuging
 getStats(results[[1]], nsim = 10)
 
-# The function only returns the simple mean as far as IB can tell. 
+# The function only returns the simple mean as far as IB can tell.
 
 #Calculate mean trend for 200 sims
 temp <- do.call(rbind, lapply(results, getStats, nsim=200))
@@ -123,16 +123,16 @@ data$power <- ifelse(data$Ttrend == -0.1 & data$error < 0.01, 1, 0)
 data$power <- ifelse(data$Ttrend == -0.05 & data$error < 0.01, 1, data$power)
 data$power <- ifelse(data$Ttrend == -0.01 & data$error < 0.01, 1, data$power)
 
-#Or which true trend falls outside % meanTrendEst + sdTrendEst 
+#Or which true trend falls outside % meanTrendEst + sdTrendEst
 #This option gives very low power overall, and no trend with nSite
-#data$power <- ifelse(data$Ttrend == -0.1 & 
- #                      (data$meanTrendEst - data$sdTrendEst) < -0.1 & 
+#data$power <- ifelse(data$Ttrend == -0.1 &
+ #                      (data$meanTrendEst - data$sdTrendEst) < -0.1 &
   #                     -0.1 < (data$meanTrendEst + data$sdTrendEst), 1, 0)
-#data$power <- ifelse(data$Ttrend == -0.05 & 
- #                      (data$meanTrendEst - data$sdTrendEst) < -0.05 & 
+#data$power <- ifelse(data$Ttrend == -0.05 &
+ #                      (data$meanTrendEst - data$sdTrendEst) < -0.05 &
   #                     -0.05 < (data$meanTrendEst + data$sdTrendEst), 1, data$power)
-#data$power <- ifelse(data$Ttrend == -0.01 & 
- #                      (data$meanTrendEst - data$sdTrendEst) < -0.01 & 
+#data$power <- ifelse(data$Ttrend == -0.01 &
+ #                      (data$meanTrendEst - data$sdTrendEst) < -0.01 &
   #                     -0.01 < (data$meanTrendEst + data$sdTrendEst), 1, data$power)
 
 powers <- dcast(data = data, formula = MS + nSite + Ttrend ~ "power", value.var = "power", fun.aggregate = function(x){sum(x)/length(x)})
@@ -188,7 +188,7 @@ head(fullPost)
 fullPost$error <- fullPost$Ttrend - fullPost$value
 fullPost$RMSE <- sqrt((fullPost$Ttrend - fullPost$value)*(fullPost$Ttrend - fullPost$value))
 fullPost[which(fullPost$RMSE > 5),] #nice
-hist(fullPost$RMSE) 
+hist(fullPost$RMSE)
 
 #subset trend = 0.1
 fullPost01AU <- subset(fullPost, Ttrend == -0.10 & MS == "AU")
@@ -196,13 +196,13 @@ str(fullPost01AU)
 scatter.smooth(fullPost01AU$error ~ fullPost01AU$nSite)
 
 #OLD summary without sites....
-summary <- acast(fullPost %>% 
+summary <- acast(fullPost %>%
                    group_by(MS, trend) %>%
                    summarise(pNeg = mean(value < 0)),
                  MS~trend, value.var = "pNeg")
 
 
-## Saving summary and full data: 
+## Saving summary and full data:
 write.csv(summary, "Power_400.csv", row.names = TRUE)
 write.csv(fullPost, "fullPost_400.csv", row.names = F)
 
