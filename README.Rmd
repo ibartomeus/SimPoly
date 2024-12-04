@@ -38,12 +38,12 @@ set.seed(32468)
 
 This is a basic example to show how we build one dataset:
 
-First we define the number of species, sites and years to simulate. We do this using the `define_sites_years()` functions. The `pool` argument is a call to `sp_pool()`, which simply defines the number of species (here `pool = 100`), and the occupancy of the `rarest` and `commonest` species. 
+First we define the number of species, sites and years to simulate. We do this using the `define_sites_years()` function. This function ensures species are assigned to sites according to realistic species occupancies and site community composition is structures along a gradient.
 
 ```{r example1, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-site_years <- define_sites_years(pool = sp_pool(pool = 1000, 
-                                                mean_occ = 0.25),
-                                 n_years = 7, n_sites = 100)
+site_years <- define_sites_years(nsp = 1000,
+                                 n_years = 7, n_sites = 400, heterogeneity = 1)
+#Note that for 400 sites, it works pretty well, but lower number of sites, mean richness levels are problematic.
 ```
 
 Let's take a closer look at the data.
@@ -53,8 +53,6 @@ head(site_years)
 length(unique(site_years$siteID))
 length(unique(site_years$species))
 ```
-
-Note that the number of species in the dataset is only `89`, compared with `100` in the species pool. This reflects stochasticity in how the species are assigned to sites.
 
 Second, we specify species attributes such as phenology, abundance and detectability
 
@@ -81,17 +79,17 @@ Third, we sample the true abundance values expected at each sampling point.
 ```{r example4, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 dat <- true_abundance(n_round = 8,
                       site_years = site_years,
-                      sp_responses = pars, white_noiseCV = 0.5)
+                      sp_responses = pars, white_noiseCV = 0.5) 
 str(dat)
 head(dat)
 ```
 
 There as many observations per species per site.  
-`year`: an integer from 1-3 (as defined by n_years, above). 
+`year`: an integer from 1-7 (as defined by n_years, above). 
 `siteID`: which site is it. 
-`round`: month of the year of this survey. 
+`round`: each of the sampling visits. 
 `species`: which species.  
-`abundance`: abundance during that visit.
+`abundance`: abundance during that visit. Zeros
 
 From this table we can calculate species richness per site
 
@@ -109,17 +107,18 @@ hist((persistence <- dcast(yearly, siteID + species ~ "persistence", value.var =
 Finally, we sample with detection error from the true values.
 
 ```{r example6, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-dat_obs <- obs_abundance(true_abundance = dat, sp_responses = pars, fraction_observed = 0.1)
+dat_obs <- obs_abundance(true_abundance = dat, sp_responses = pars, fraction_observed = 0.5)
 head(dat_obs)
-plot(dat_obs$obs, dat_obs$abundance) #nice expected correlation, but more noisy.
-plot(dat_obs$obs, dat_obs$presences_pan) #nice expected correlation, but more noisy.
+plot(dat_obs$obs, dat_obs$abundance, pch = ".") #nice expected correlation, but more noisy.
+#plot(dat_obs$obs, dat_obs$presences_pan) #nice expected correlation, but more noisy.
 ```
 
 We can simulate a second transect if desired:
 ```{r example7, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-dat_obs$obs2 <- obs_abundance(true_abundance = dat, sp_responses = pars, fraction_observed = 0.1)$obs #note order is preserved
+dat_obs$obs2 <- obs_abundance(true_abundance = dat, sp_responses = pars, 
+                              fraction_observed = 0.5, pantrap = FALSE)$obs #note order is preserved
 head(dat_obs)
-plot(dat_obs$obs, dat_obs$obs2) #nice expected correlation.
+plot(dat_obs$obs, dat_obs$obs2, pch = ".") #nice expected correlation.
 ```
 
 This is the final output:
@@ -129,14 +128,19 @@ head(dat_obs)
 ```
 
 ```{r example9, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-plot(dat_obs$abundance ~ dat_obs$obs, las = 1, xlim = c(0,max(dat_obs$abundance)), 
-     ylim = c(0,max(dat_obs$abundance))) 
 #you can summarize observed variables per species, site and year
 s_dat <- summary_poms(dat_obs, var_name = "obs")
 head(s_dat)
 scatter.smooth(s_dat$obs_abund ~ s_dat$year, las = 1)
+#test glm
+library(lme4)
+m <- lmer(obs_abund ~ year + (1 | species) + (1 | siteID),  data=s_dat)
+summary(m) # estimate -2 +- 0.01 
+abline(fixef(m), col = "red")
 #This can be easily loop to obtain several simulations
 ```
+
+The real models should be for each species with enough data `lmer(obs_abund ~ year + (1 | siteID) ,  data=s_dat)` Then, calculate the aggregated mean from the ESTIMATES AND SE (by calculating the mean from the posterior distribution of species estimates (e.g. 1000 draws of estimate +- se))
 
 ## Citation
 
