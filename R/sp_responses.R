@@ -18,7 +18,7 @@
 #' @details Species phenological peak activity and phenological range are normally distributed using the provided means and sd.
 #' Species peak abundances are calculated from a lognormal distribution with meanlog = 3 and sdlog = 0.8. This creates
 #' abundance distributions mirroring empirical observed patterns, and within the range of the expected
-#' absolute values for pollinators. Species responses are drawn from an uniform distribution according to the maximum and minimum
+#' absolute values for pollinators. Species responses are drawn from a normal distribution calculated from the the maximum and minimum
 #' values provided. Finally, species detectabilities follow a beta distribution with alpha = 1 and beta = 2
 #' and the probability of detecting an individual in a pantrap (p) is calculated from
 #' p = 1-(1-q)^N, where q is the number of pantraps deployed and N the population abundances,
@@ -54,25 +54,32 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   #h <- ifelse(max(h) > 20*mean(h), 20*mean(h), h) #cap maximum abundance
   #JRC asks about the possibility of an abundance-dependent assignation of phenological tolerances.
 
+  #for debuging
   #x <- rlnorm(1214, meanlog = 3.5, sdlog = 0.6)
   #summary(x)
   #hist(x)
 
   #We can define also here the responses expected (i.e. trend).
   #We assume a multiplicative slope (-1 and 1) affecting the population per year.
-  slope <- runif(n_sp, min = trend_min, max = trend_max)
-  #We assume an uniform spread of responses across species within the specifies range.
+  se <- ((trend_max - trend_min) / 2)/1.96
+  #hist(rnorm(1000, 1, 0.051))
+  slope <- rnorm(n_sp, mean = mean(c(trend_min, trend_max)), sd = se)
+  #We assume a normal distribution of responses across species within the specified range.
 
   #Finally, we define species detectabilities
   #Assign to each species a detectability
   #detect <- runif(n_sp) #random. Note that when implemented, they will be weighted by species abundance.
-  detect <- rbeta(n_sp, 1, 2) #Let's assume detectabilities are low.
+  detect <-  rbeta(n_sp, 1, 1.5) #Let's assume detectabilities are low.
+  #hist(rbeta(n_sp, 1, 1.5))
+  #make species detectabilities proportional to abundances? We decided not to do it.
+  #detect <- detect[order(detect)] #this would be a bit extreme option.
+  #h <- h[order(h)]
   detect_pan <- rgamma(n_sp, shape = 1.221913, rate = 140.532379) #scale = 0.007115798 #Informed by TERENO data.
      #Now uncorrelated with above! This is prob of falling in a pantrap per indiv.
 
   #We can join this info at species level
   pars <- data.frame(species = species,  opt = round(opt, 2),
-                     tol = round(tol, 2), h = h, slope = round(slope, 2),
+                     tol = round(tol, 2), h = h, slope = round(slope, 4),
                      detect = round(detect, 4), detect_pan = round(detect_pan, 4)) # put in a matrix
   pars
 }
