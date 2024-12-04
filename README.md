@@ -6,7 +6,11 @@
 # SimPoly
 
 The goal of SimPoly is to simulate a EU-PoMS like datasets with known
-parameters and appropriate built in stochasticity.
+parameters and appropriate built in stochasticity. The only goal is to explore 
+how different types of variability affect model performance under strong simplified assumptions 
+and should be interpreted as such. 
+
+DISCLAIMER: This is work in progress and the assumptions used to build the simulations can be enhanced. 
 
 ## Installation
 
