@@ -9,19 +9,19 @@ sp_pool(pool = 100, mean_occ = 0.25)
 \arguments{
 \item{pool}{Numeric, number of species to simulate}
 
-\item{mean_occ}{Numeric, mean expected occupancy (0-1). Default 0.25, which creates realistic occupancy values ranging from 0 to ~0.75}
+\item{mean_occ}{Numeric, DEPRECIATED; mean expected occupancy (0-1). Default 0.25, which creates realistic occupancy values ranging from 0 to ~0.75}
 }
 \value{
 A list with a vector of species, and a vector of its distribution.
 }
 \description{
-This function sets the species pool for a given region
+This function sets the species pool for a given region. Currently not used.
 }
 \details{
 Species distribution follow a beta distribution. The beta distribution
 has two parameters. We fixed alpha to 1 and calculate beta from the desired mean occupancy.
 This distribution ensures most species have narrow distributions and there are few widespread
-species, as expected based on bee ecological knowledge.
+species, as expected based on bee ecological knowledge. In the current implementation distribution is not used.
 }
 \examples{
 sp_pool(pool = 50, mean_occ = 0.25)

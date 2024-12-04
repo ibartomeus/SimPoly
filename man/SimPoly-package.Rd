@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Ignasi Bartomeus \email{nacho.bartomeus@gmail.com} (\href{https://orcid.org/0000-0001-7893-4389 }{ORCID})
+\strong{Maintainer}: Ignasi Bartomeus \email{nacho.bartomeus@gmail.com} (\href{https://orcid.org/0000-0001-7893-4389}{ORCID})
 
 Other contributors:
 \itemize{

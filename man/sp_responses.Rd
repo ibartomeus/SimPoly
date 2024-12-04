@@ -45,7 +45,7 @@ This function defines for each species its phenology, typical abundance, detecta
 Species phenological peak activity and phenological range are normally distributed using the provided means and sd.
 Species peak abundances are calculated from a lognormal distribution with meanlog = 3 and sdlog = 0.8. This creates
 abundance distributions mirroring empirical observed patterns, and within the range of the expected
-absolute values for pollinators. Species responses are drawn from an uniform distribution according to the maximum and minimum
+absolute values for pollinators. Species responses are drawn from a normal distribution calculated from the the maximum and minimum
 values provided. Finally, species detectabilities follow a beta distribution with alpha = 1 and beta = 2
 and the probability of detecting an individual in a pantrap (p) is calculated from
 p = 1-(1-q)^N, where q is the number of pantraps deployed and N the population abundances,

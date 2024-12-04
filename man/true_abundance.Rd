@@ -36,7 +36,7 @@ This function calculate true abundance in each sampling round.
 Rounds are distributed homogeneously across the sampling period. Natural yearly fluctuations
 (i.e. white noise) are assumed to follow a normal distribution with a mean corresponding to the species
 peak abundance and sd calculated from the provided coeficient of variation. Hence, we add white noise
-proportional to species abundances. Negative values are truncated to 0. Population trends (i.e. red noise)
+proportional to species abundances. Based on Tereno and BeeFun data, expected CV is around 0.5. Negative values are truncated to 0. Population trends (i.e. red noise)
 are incorporated to each species and year by multiplying the species mean abundance by the provided slope
 of the linear trend and the number of years modeled. Hence, the more years, the larger the change expected.
 Finally, we use coenocliner package to calculate for each species a gausian abundance distribution along each year
