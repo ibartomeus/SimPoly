@@ -41,8 +41,8 @@ This is a basic example to show how we build one dataset:
 First we define the number of species, sites and years to simulate. We do this using the `define_sites_years()` function. This function ensures species are assigned to sites according to realistic species occupancies and site community composition is structures along a gradient.
 
 ```{r example1, eval = FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-site_years <- define_sites_years(nsp = 1000,
-                                 n_years = 7, n_sites = 400, heterogeneity = 1)
+site_years <- define_sites_years(nsp = 1000, ctrl = -5,
+                                 n_years = 7, n_sites = 800, heterogeneity = 1)
 #Note that for 400 sites, it works pretty well, but lower number of sites, mean richness levels are problematic.
 ```
 

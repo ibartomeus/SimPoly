@@ -10,7 +10,7 @@
 #' @param trend_max Numeric, minimum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.
 #' @param trend_min Numeric, máximum slope of linear decline per year. Take values between 0 and infinite, with values < 1 implying declines.
 #' @param meanlog Numeric, parameter of the lognormal distribution to generate species abundances. Default 3
-#' @param sdlog Numeric, parameter of the lognormal distribution to generate species abundances. Default 0.8
+#' @param sdlog Numeric, parameter of the lognormal distribution to generate species abundances. Default 0.6
 #'
 #' @return A data.frame.
 #' @export

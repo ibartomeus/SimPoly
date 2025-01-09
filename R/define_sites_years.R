@@ -5,6 +5,7 @@
 #' @param nsp Numeric, number of species in the region.
 #' @param n_years Numeric, number of years
 #' @param n_sites Numeric, number of sites (imagine a lattice)
+#' @param ctrl Numeric, tunes the richness per site. has to be negative, the lower, the less richness.
 #' @param heterogeneity A number of environmental heterogeneity expected across sites.
 #' It can be read as an SD across MS with LX close to 0 and Spain ~1. If MS values are in another scale,
 #' we can remove the minimum and divide by max to get 0-1 scale
@@ -19,12 +20,12 @@
 #'
 #' @examples
 #' define_sites_years(nsp = 100, n_years = 3, n_sites = 10, heterogeneity = 1)
-define_sites_years <- function(nsp, n_years, n_sites,
+define_sites_years <- function(nsp, n_years, n_sites, ctrl = -3,
                                heterogeneity = 1){
   #defensive programming here (i.e. check if numeric and range)
   source("R/Rspecies.R")
-  spCoef <- t(data.frame(a = rnorm(n=nsp, mean=-2.5), b= sort(rnorm(nsp))))
-  #a = average occ
+  spCoef <- t(data.frame(a = rnorm(n=nsp, mean=ctrl), b= sort(rnorm(nsp))))
+  #a = average occ #Not sure why -2.5, but this was in Nick's code.
   #b = species responses to gradient (normal)
   #define the values of the site
   siteSD <- heterogeneity # this parameter defines the heterogeneity among sites.
