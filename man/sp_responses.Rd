@@ -33,7 +33,7 @@ sp_responses(
 
 \item{meanlog}{Numeric, parameter of the lognormal distribution to generate species abundances. Default 3}
 
-\item{sdlog}{Numeric, parameter of the lognormal distribution to generate species abundances. Default 0.8}
+\item{sdlog}{Numeric, parameter of the lognormal distribution to generate species abundances. Default 0.6}
 }
 \value{
 A data.frame.
