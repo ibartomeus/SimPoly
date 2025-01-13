@@ -45,7 +45,7 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
   #mus <- list() #store in lists if needed (do we need to keep track of this?)
   #For now we store final counts only
   #simnbs <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA)
-  simnbs <- lapply(1:n_years, function(j){
+  simnbs <- future_lapply(1:n_years, function(j){
     #for(j in 1:n_years){
     #select year j
     year_temp <- subset(data, year == j)
@@ -91,6 +91,6 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
     #simnbs <- simnbs[-1,] # not sure what this is for
     #head(simnbs)
     return(do.call(rbind,  simnbs1))
-  })
+  }, future.seed=TRUE)
   return(do.call(rbind,  simnbs))
 }

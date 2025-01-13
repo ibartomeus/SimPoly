@@ -48,7 +48,7 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
   #out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
   #                  obs = NA, total_pantraps = NA, presences_pan = NA)
   #loop trough years
-  out <- lapply(1:n_years, function(k){
+  out <- future_lapply(1:n_years, function(k){
   #for(k in 1:n_years){
     year_temp <- subset(sim_data, year == k)
     fraction_observed_noised <- fraction_observed * rnorm(1, 1, 0.06) #fraction observed has noise by year only.
@@ -114,6 +114,6 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
     })
     print(paste("year", k ,"calculated at", Sys.time()))
     return(do.call(rbind, siteRes))
-  })
+  }, future.seed=TRUE)
   out <- do.call(rbind, out)
 }
