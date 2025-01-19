@@ -62,7 +62,7 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
     pars$h_y <- pars$h2 * ((pars$slope)^j) #can never get negative, just terribly small.
 
     #for(i in 1:length(site_names)){
-    simnbs1 <- lapply(1:length(site_names), function(i){
+    simnbs1 <- future_lapply(1:length(site_names), function(i){
       #select site i
       site_temp <- subset(data, siteID == site_names[i])
       #select species present in site i
@@ -87,7 +87,7 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
       colnames(sim_melted) <- c("round", "jday", "species", "abundance", "siteID", "year")
       return(sim_melted[,c("year", "siteID", "round", "jday", "species", "abundance")])
       #simnbs <- rbind(simnbs, sim_melted[,c("year", "siteID", "round", "jday", "species", "abundance")])
-    })
+    }, future.seed=TRUE)
     #simnbs <- simnbs[-1,] # not sure what this is for
     #head(simnbs)
     return(do.call(rbind,  simnbs1))
