@@ -21,8 +21,7 @@
 #' @export
 #'
 #' @examples
-#' pool <- sp_pool(50)
-#' site_years <- define_sites_years_rich(pool = pool, n_years = 3, n_sites = 10)
+#' site_years <- define_sites_years(nsp = 100, n_years = 3, n_sites = 10)
 #' pars <- sp_responses(site_years = site_years)
 #' abun <- true_abundance(n_round = 8,
 #'                                  site_years = site_years,
@@ -48,7 +47,7 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
   #out <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA,
   #                  obs = NA, total_pantraps = NA, presences_pan = NA)
   #loop trough years
-  out <- future_lapply(1:n_years, function(k){
+  out <- future.apply::future_lapply(1:n_years, function(k){
   #for(k in 1:n_years){
     year_temp <- subset(sim_data, year == k)
     fraction_observed_noised <- fraction_observed * rnorm(1, 1, 0.06) #fraction observed has noise by year only.

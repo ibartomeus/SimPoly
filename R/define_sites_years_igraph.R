@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' pool <- sp_pool(50)
-#' define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+#' define_sites_years_igraph(pool = sp_pool(50), n_years = 3, n_sites = 10)
 define_sites_years_igraph <- function(pool, n_years, n_sites,
                              rich_mean = 30, rich_sd = 5){
   #defensive programming here (i.e. check if numeric and range)

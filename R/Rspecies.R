@@ -1,4 +1,22 @@
-#https://rdrr.io/rforge/rspecies/man/rspecies.html
+#' Rspecies
+#'
+#' This function is used from https://rdrr.io/rforge/rspecies/man/rspecies.html. See help there.
+#'
+#' @param n See original funtcion
+#' @param spp See original funtcion
+#' @param b See original funtcion
+#' @param x See original funtcion
+#' @param type See original funtcion
+#' @param family See original funtcion
+#' @param sigma See original funtcion
+#' @param cor See original funtcion
+#' @param theta See original funtcion
+#' @param attrib See original funtcion
+#' @param seed See original funtcion
+#'
+#' @return A matrix.
+#' @export
+#'
 rspecies <-
   function(n, spp, b=rep(0, spp), x=rep(1, n), type=c("glm", "glm.nb", "glmm"),
            family=gaussian, sigma=1, cor=diag(1, n, n), theta=1,
@@ -37,7 +55,7 @@ rspecies <-
       dia <- sigma^2
       if (type == "glmm") {
         SIGMA <- lapply(1:spp, function(i) dia[i] * cor)
-        require(MASS)
+        #require(MASS)
         mu <- lapply(1:spp, function(i) MASS::mvrnorm(1, mu[[i]], SIGMA[[i]]))
       }
       if (family$family == "gaussian" && type == "glm") {

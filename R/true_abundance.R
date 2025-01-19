@@ -24,8 +24,7 @@
 #' @export
 #'
 #' @examples
-#' pool <- sp_pool(50)
-#' site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+#' site_years <- define_sites_years(nsp = 100, n_years = 3, n_sites = 10)
 #' pars <- sp_responses(site_years = site_years)
 #' true_abundance(n_round = 8,
 #'                site_years = site_years,
@@ -45,7 +44,7 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
   #mus <- list() #store in lists if needed (do we need to keep track of this?)
   #For now we store final counts only
   #simnbs <- data.frame(year = NA, siteID = NA, round = NA, jday = NA, species = NA, abundance = NA)
-  simnbs <- future_lapply(1:n_years, function(j){
+  simnbs <- future.apply::future_lapply(1:n_years, function(j){
     #for(j in 1:n_years){
     #select year j
     year_temp <- subset(data, year == j)
@@ -62,7 +61,7 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
     pars$h_y <- pars$h2 * ((pars$slope)^j) #can never get negative, just terribly small.
 
     #for(i in 1:length(site_names)){
-    simnbs1 <- future_lapply(1:length(site_names), function(i){
+    simnbs1 <- future.apply::future_lapply(1:length(site_names), function(i){
       #select site i
       site_temp <- subset(data, siteID == site_names[i])
       #select species present in site i

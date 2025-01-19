@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' pool <- sp_pool(50)
-#' define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+#' define_sites_years_occ(pool = pool, n_years = 3, n_sites = 10)
 define_sites_years_occ <- function(pool, n_years, n_sites,
                                rich_mean = 30, rich_sd = 5){
   #defensive programming here (i.e. check if numeric and range)

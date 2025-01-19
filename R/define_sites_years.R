@@ -23,7 +23,7 @@
 define_sites_years <- function(nsp, n_years, n_sites, ctrl = -3,
                                heterogeneity = 1){
   #defensive programming here (i.e. check if numeric and range)
-  source("R/Rspecies.R")
+  #source("R/Rspecies.R")
   spCoef <- t(data.frame(a = rnorm(n=nsp, mean=ctrl), b= sort(rnorm(nsp))))
   #a = average occ #Not sure why -2.5, but this was in Nick's code.
   #b = species responses to gradient (normal)
