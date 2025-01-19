@@ -53,7 +53,6 @@ using TERENO project data we estimate q and N values. According to this data, p 
 gamma-distributed with Shape = 1.221913, Rate = 140.532379 and Scale: 0.007115798.
 }
 \examples{
-pool <- sp_pool(50)
-site_years <- define_sites_years(pool = pool, n_years = 3, n_sites = 10)
+site_years <- define_sites_years(nsp = 100, n_years = 3, n_sites = 10)
 sp_responses(site_years = site_years)
 }

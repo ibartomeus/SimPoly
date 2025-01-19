@@ -40,8 +40,7 @@ in each pantrap. We report for each species, site, year and round, how many pant
 This function is slow.
 }
 \examples{
-pool <- sp_pool(50)
-site_years <- define_sites_years_rich(pool = pool, n_years = 3, n_sites = 10)
+site_years <- define_sites_years(nsp = 100, n_years = 3, n_sites = 10)
 pars <- sp_responses(site_years = site_years)
 abun <- true_abundance(n_round = 8,
                                  site_years = site_years,
