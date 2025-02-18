@@ -48,18 +48,18 @@ true_abundance <- function(n_round = 8, startmonth = 2, endmonth = 10,
     #for(j in 1:n_years){
     #select year j
     year_temp <- subset(data, year == j)
+    #Add a directional noise (red noise) based on species responses.
+    pars$h_y <- pars$h * ((pars$slope)^j) #can never get negative, just terribly small.
     #We add white noise to h as a function of year (yearly fluctuations)
     #white_noise <- rnorm(length(pars$h), 0, 0.05) #this is very little white noise. It can be added to red noise below.
-    sd = pars$h*white_noiseCV #mean * CV
-    pars$h2 <- pars$h
+    sd = pars$h_y*white_noiseCV #mean * CV
+    pars$h2 <- pars$h_y
     for(k in 1:length(pars$h)){
-      pars$h2[k] <- rnorm(1, pars$h[k], sd[k]) #this adds white noise proportional to species abundances.
+      pars$h2[k] <- rnorm(1, pars$h_y[k], sd[k]) #this adds white noise proportional to species abundances.
     }
     pars$h2 <- ifelse(pars$h2 < 0, 0, pars$h2)
     #plot(pars$h2, pars$h)
-    #And a directional noise (red noise) based on species responses.
-    pars$h_y <- pars$h2 * ((pars$slope)^j) #can never get negative, just terribly small.
-
+    pars$h_y <- pars$h2 #recode
     #for(i in 1:length(site_names)){
     simnbs1 <- future.apply::future_lapply(1:length(site_names), function(i){
       #select site i
