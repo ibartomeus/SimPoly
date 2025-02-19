@@ -68,9 +68,8 @@ obs_abundance <- function(true_abundance = NULL, sp_responses, fraction_observed
                    num = sr_temp[,c("abundance")])
           #calculate the number of individuals detected
           #max noise ranges from only observing 0.25 to 0.75.
-          fraction_observed_noised <- fraction_observed * rnorm(1, 1, noise_frac) #fraction observed has noise by year only.
+          fraction_observed_noised <- fraction_observed * abs(rnorm(1, 1, noise_frac)) #fraction observed has noise by year only.
           sample_size <- ceiling(nrow(sampler)*fraction_observed_noised)
-
           #and sample this number from the vector
           obs_raw <- sample(sampler$species, size =  sample_size,
                     replace = FALSE, prob = sampler$detect)
