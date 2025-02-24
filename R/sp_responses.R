@@ -48,6 +48,12 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   tol <- ifelse(tol > 200, 200, tol) #and max.
   #Define species abundances following a lognormal distribution
   h <- ceiling(rlnorm(n_sp, meanlog = meanlog, sdlog = sdlog)) # max abundances per species ->
+  h <- ifelse(h > 300, 300, h)
+  #hist(rlnorm(1000, meanlog = 3.5, sdlog = 0.5))
+  #hist(rlnorm(1000, meanlog = 3, sdlog = 0.75))
+  #hist(rlnorm(1000, meanlog = 2.5, sdlog = 1))
+  #hist(rlnorm(1000, meanlog = 2, sdlog = 1.25))
+  #hist(rlnorm(1000, meanlog = 1.5, sdlog = 1.5))
   #max(h) #this gives up to ~200 individuals per site of the dominant speices
   #can use this if needed: https://rdrr.io/cran/mobsim/man/sim_sad.html
   #h <- ifelse(max(h) > 20*mean(h), 20*mean(h), h) #cap maximum abundance
