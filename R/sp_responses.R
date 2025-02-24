@@ -48,7 +48,7 @@ sp_responses <- function(site_years, pheno_peak_mean = 120, pheno_peak_sd = 50,
   tol <- ifelse(tol > 200, 200, tol) #and max.
   #Define species abundances following a lognormal distribution
   h <- ceiling(rlnorm(n_sp, meanlog = meanlog, sdlog = sdlog)) # max abundances per species ->
-  h <- ifelse(h > 300, 300, h)
+  h <- ifelse(h > 600, 600, h)
   #hist(rlnorm(1000, meanlog = 3.5, sdlog = 0.5))
   #hist(rlnorm(1000, meanlog = 3, sdlog = 0.75))
   #hist(rlnorm(1000, meanlog = 2.5, sdlog = 1))
